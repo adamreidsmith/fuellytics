@@ -4,7 +4,7 @@ import { Accelerometer } from 'expo-sensors';
 import { Subscription } from 'expo-modules-core';
 import io from 'socket.io-client';
 
-const socket = io('http://127.0.0.1:5000');
+const socket = io('http://localhost:5000', { transports: ['websocket'] });
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -14,6 +14,8 @@ export default function App() {
     z: 0,
   });
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+
+  console.log('New changes');
 
   useEffect(() => {
     socket.on('connect', () => {
