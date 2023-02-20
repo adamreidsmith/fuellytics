@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo-cli start --tunnel",
+    "start": "expo start",
+    "tunnel": "expo-cli start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -26,11 +27,12 @@
     "react-native-screens": "~3.18.0",
     "react-native-view-more-text": "^2.2.0",
     "react-native-web": "~0.18.7",
-    "react-native-webview": "11.23.1"
+    "react-native-webview": "11.23.1",
+    "socket.io": "^4.6.0",
+    "socket.io-client": "^4.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@expo/webpack-config": "^0.17.4",
+    "@expo/webpack-config": "^18.0.1",
     "@types/node": "^18.11.9",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
