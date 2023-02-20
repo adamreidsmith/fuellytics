@@ -1,6 +1,5 @@
-# Fuellytics
-
 ![Fuellytics logo](./assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background.png "Fuellytics")
+---
 
 # How to run the backend
 
