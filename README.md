@@ -33,7 +33,7 @@ To run the project:
 flask run
 ```
 
-# How to run the backend
+# How to run the frontend
 
 Go to the frontend directory:
 
