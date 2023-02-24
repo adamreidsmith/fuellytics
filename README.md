@@ -1,6 +1,10 @@
 ![Fuellytics logo](./assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background.png "Fuellytics")
 ---
 
+# TODO
+
+- [ ] For Waika cause I don't want to mess up your beautiful frontend code: Use `rotation` from `expo-sensors`'s `DeviceMotion` class to send device orientation information to the backend: [see here](https://docs.expo.dev/versions/v47.0.0/sdk/devicemotion/#devicemotionmeasurement).
+
 # How to run the backend
 
 Go to the backend directory:
