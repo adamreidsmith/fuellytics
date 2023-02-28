@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Accelerometer } from 'expo-sensors';
+import { Accelerometer, DeviceMotion } from 'expo-sensors';
 import { Subscription } from 'expo-modules-core';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000', { transports: ['websocket'] });
+const socket = io('http://127.0.0.1:5000');
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -13,9 +13,17 @@ export default function App() {
     y: 0,
     z: 0,
   });
+  const [acceleration, setSetAcceleration] = useState<{
+    x: number;
+    y: number;
+    z: number;
+  } | null>(null);
+  const [{ alpha, beta, gamma }, setRotation] = useState({
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  });
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-
-  console.log('New changes');
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -30,6 +38,33 @@ export default function App() {
     return () => {
       socket.off('connect');
       socket.off('disconnect');
+    };
+  }, []);
+
+  const isDeviceMotionReady = async () => {
+    try {
+      const response = await DeviceMotion.requestPermissionsAsync();
+
+      if (!response.granted) return;
+
+      const isAvailable = await DeviceMotion.isAvailableAsync();
+
+      if (!isAvailable) return;
+
+      DeviceMotion.addListener(({ rotation, acceleration }) => {
+        setRotation(rotation);
+        setSetAcceleration(acceleration);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    isDeviceMotionReady();
+
+    return () => {
+      DeviceMotion.removeAllListeners();
     };
   }, []);
 
@@ -69,7 +104,6 @@ export default function App() {
         }}
       >
         Accelerometer: (in gs where 1g = 9.81 m/s^2)
-        {JSON.stringify(isConnected)}
       </Text>
       <Text style={styles.text}>x: {x}</Text>
       <Text style={styles.text}>y: {y}</Text>
@@ -91,6 +125,14 @@ export default function App() {
           <Text>Fast</Text>
         </TouchableOpacity>
       </View>
+      <Text style={styles.text}>Rotation</Text>
+      <Text style={styles.text}>roll: {gamma}</Text>
+      <Text style={styles.text}>pitch: {beta}</Text>
+      <Text style={styles.text}>azimouth: {alpha}</Text>
+      <Text style={styles.text}>Acceleration without gravity</Text>
+      <Text style={styles.text}>x: {acceleration?.x}</Text>
+      <Text style={styles.text}>y: {acceleration?.y}</Text>
+      <Text style={styles.text}>z: {acceleration?.z}</Text>
     </View>
   );
 }
