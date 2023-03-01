@@ -10,15 +10,17 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^6.5.3",
-    "@react-navigation/native": "^6.0.13",
-    "@react-navigation/native-stack": "^6.9.1",
+    "@expo/ngrok": "^4.1.0",
+    "@react-navigation/bottom-tabs": "^6.5.7",
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
     "expo": "~47.0.12",
     "expo-cli": "^6.3.1",
     "expo-linear-gradient": "~12.0.1",
     "expo-location": "~15.0.1",
     "expo-sensors": "~12.0.1",
     "expo-status-bar": "~1.4.2",
+    "haversine": "^1.1.1",
     "process": "^0.11.10",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@expo/webpack-config": "^18.0.1",
+    "@types/haversine": "^1.1.5",
     "@types/node": "^18.11.9",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
