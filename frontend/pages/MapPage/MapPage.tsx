@@ -89,6 +89,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  pepe: {
+    color: 'red'
+  },
   map: {
     width: '100%',
     height: '100%',
