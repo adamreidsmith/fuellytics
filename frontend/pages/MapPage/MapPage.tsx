@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, StyleSheet, Text, Button } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
@@ -11,6 +11,7 @@ const MapPage = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
+  const [isRecording, setIsRecording] = useState(false);
   const [routeCoordinates, setRouteCoordinates] = useState<
     LocationObjectCoords[]
   >([]);
@@ -24,6 +25,8 @@ const MapPage = () => {
     if (status !== 'granted') {
       setErrorMessage('Permission to access location was denied');
     }
+
+    return status;
   };
 
   const subscribeToLocationUpdates = async () => {
@@ -51,14 +54,16 @@ const MapPage = () => {
     setRouteCoordinates((state) => [...state, location.coords]);
   };
 
-  useEffect(() => {
+  const onStart = () => {
     requestLocationPermission();
     subscribeToLocationUpdates();
+    setIsRecording(true);
+  };
 
-    return () => {
-      unsubscribeFromLocationUpdates();
-    };
-  }, []);
+  const onEnd = () => {
+    unsubscribeFromLocationUpdates();
+    setIsRecording(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -79,6 +84,31 @@ const MapPage = () => {
           }}
         />
       </MapView>
+      <View style={styles.bottomSheet}>
+        <Text>Fuel consumption analysis</Text>
+        <Text>Time</Text>
+        <Text>Latitude</Text>
+        <Text>Longitude</Text>
+        <Text>Current Gas consumption</Text>
+        <Text>Gas emission</Text>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={isRecording ? onEnd : onStart}
+            title={
+              // eslint-disable-next-line no-nested-ternary
+              isRecording
+                ? 'Stop'
+                : routeCoordinates.length > 0
+                  ? 'Continue recording'
+                  : 'Start'
+            }
+            color="#841584"
+          />
+          {routeCoordinates.length > 0 && !isRecording && (
+            <Button onPress={onEnd} title="Finalize" color="#841584" />
+          )}
+        </View>
+      </View>
     </View>
   );
 };
@@ -88,9 +118,10 @@ export default MapPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
   pepe: {
-    color: 'red'
+    color: 'red',
   },
   map: {
     width: '100%',
@@ -113,9 +144,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
   },
+  bottomSheet: {
+    padding: 24,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
+    backgroundColor: 'white',
+  },
   buttonContainer: {
+    display: 'flex',
+    alignItems: 'center',
     flexDirection: 'row',
-    marginVertical: 20,
-    backgroundColor: 'transparent',
+    justifyContent: 'space-around',
   },
 });
