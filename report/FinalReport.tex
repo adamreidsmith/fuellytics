@@ -9,22 +9,22 @@
 \usepackage{setspace}
 \usepackage{esvect}
 \usepackage{url}
+\usepackage{lipsum} 
 
 %\setcounter{secnumdepth}{0}
 \onehalfspacing
 
-%\title{ENGO 623 Assignment 1}
-%\vspace{2cm}
-%\author{Adam Smith}
-%\date{\today}							% Activate to display a given date or no date
+%\newcounter{refcounter}
+
+\newcounter{refno}
+\newcommand{\reflabel}[1]{\refstepcounter{refno}\label{#1}[\arabic{refno}]}
+
 
 \begin{document}
-%\maketitle
-
 
 % Title Page
 \begin{titlepage}
-	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 	
 	\center
 	\textsc{\LARGE University of Calgary}\\[1.5cm]
@@ -32,61 +32,54 @@
 	\textsc{\large Final Project}\\[0.5cm]
 
 	\HRule\\[0.4cm]
-	{\huge\bfseries Fuellytics}\\[0.4cm]
+	{\huge\bfseries Fuellytics: Real-Time Vehicular Fuel Consumption and Emissions Monitoring}\\[0.4cm]
 	\HRule\\[1.5cm]
 	
-	%------------------------------------------------
-	%	Author(s)
-	%------------------------------------------------
+	{\large\textit{Group \#}}\\
+	Adam \textsc{Smith} (30031453)\\
+	Chavisa \textsc{Sornsakul} (12345678)\\
+	Wai Ka \textsc{Wong Situ} (12345678)\\
 	
-	\begin{minipage}{0.4\textwidth}
-		\begin{flushleft}
-			\large
-			\textit{Author}\\
-			B.J. \textsc{Blazkowicz} % Your name
-		\end{flushleft}
-	\end{minipage}
-	~
-	\begin{minipage}{0.4\textwidth}
-		\begin{flushright}
-			\large
-			\textit{Supervisor}\\
-			Dr. Caroline \textsc{Becker} % Supervisor's name
-		\end{flushright}
-	\end{minipage}
+	\vfill\vfill\vfill
+	{\large\today}
 	
-	% If you don't want a supervisor, uncomment the two lines below and comment the code above
-	%{\large\textit{Author}}\\
-	%John \textsc{Smith} % Your name
-	
-	%------------------------------------------------
-	%	Date
-	%------------------------------------------------
-	
-	\vfill\vfill\vfill % Position the date 3/4 down the remaining page
-	
-	{\large\today} % Date, change the \today to a set date if you want to be precise
-	
-	%------------------------------------------------
-	%	Logo
-	%------------------------------------------------
-	
-	%\vfill\vfill
-	%\includegraphics[width=0.2\textwidth]{placeholder.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
-	 
-	%----------------------------------------------------------------------------------------
-	
-	\vfill % Push the date up 1/4 of the remaining page
-	
+	\vfill\vfill\vfill
+	\includegraphics[width=8cm,]{img/schulich.png}\\[1cm]	
 \end{titlepage}
 
+\section{Executive summary}
 
+\section{Problem statement}
+According to the International Energy Agency, transportation accounts for almost one-quarter of global greenhouse gas emissions, and within that, road transport is responsible for the largest share of emissions \reflabel{transport-emissions}. Reducing carbon emissions from vehicles is crucial to mitigate the harmful effects of climate change. The burning of fossil fuels in vehicles produces carbon dioxide (CO$_2$), which is the most prevalent greenhouse gas contributing to global warming. CO$_2$ emissions from vehicles are particularly harmful because they are released directly into the atmosphere, where they trap heat and contribute to the Earth's rising temperatures.
+
+\section{Literature review}
+
+\section{Solution summary}
+
+\section{Architecture}
+
+\subsection{Design rationale}
+
+\subsection{Architecture description}
+
+\subsection{API}
+
+\subsection{Sequence Diagram}
+
+\subsection{Data models and JSON encodings}
+
+\section{Results}
+
+\section{Lessons learned}
+
+\section{Conclusion}
  
  
 \section{References}
 
 \begin{small}
 
+[\ref{transport-emissions}] https://www.iea.org/reports/transport-energy-and-co2
 
 
 \end{small}

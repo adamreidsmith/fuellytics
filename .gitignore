@@ -16,3 +16,9 @@ web-build/
 .myEnv
 __pycache__
 *_session/
+
+# report
+report/FinalReport.aux
+report/FinalReport.out
+report/FinalReport.log
+report/FinalReport.synctex.gz
