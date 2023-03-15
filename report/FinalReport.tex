@@ -15,7 +15,9 @@
 \onehalfspacing
 
 \newcounter{refno}
-\newcommand{\reflabel}[1]{\refstepcounter{refno}\label{#1}[\arabic{refno}]}
+\newcommand{\reflabel}[1]{\refstepcounter{refno}\label{#1}[\arabic{refno}]}  %create ref labels in-text
+
+\newcommand{\refinit}[1]{\noindent \hangindent=0.5cm [\ref{#1}]}  %citation initialization in reference section
 
 \begin{document}
 % Title Page
@@ -95,23 +97,23 @@ Papers on the subject: Main reference: \url{https://www.mdpi.com/2076-3417/9/7/1
 
 \begin{small}
 
-\noindent [\ref{transport-emissions}] \url{https://www.iea.org/reports/transport-energy-and-co2}
+\refinit{transport-emissions} \url{https://www.iea.org/reports/transport-energy-and-co2} we need more text to see if this works
 
-\noindent [\ref{oil-based-transport}] \url{https://www.iea.org/reports/transport}
+\refinit{oil-based-transport} \url{https://www.iea.org/reports/transport}
 
-\noindent [\ref{driving-style}] \url{https://afdc.energy.gov/conserve/behavior_techniques.html}
+\refinit{driving-style} \url{https://afdc.energy.gov/conserve/behavior_techniques.html}
 
-\noindent [\ref{fuel-force}] \url{https://info.gartnerdigitalmarkets.com/multiforce-gdm-lp?channel=capterra}
+\refinit{fuel-force} \url{https://info.gartnerdigitalmarkets.com/multiforce-gdm-lp?channel=capterra}
 
-\noindent [\ref{triscan}] \url{https://www.thetriscangroup.com/}
+\refinit{triscan} \url{https://www.thetriscangroup.com/}
 
-\noindent [\ref{fuelly}] \url{https://www.fuelly.com}
+\refinit{fuelly} \url{https://www.fuelly.com}
 
-\noindent [\ref{fuelline}] \url{https://fuel-line.fly.dev/}
+\refinit{fuelline} \url{https://fuel-line.fly.dev/}
 
-\noindent [\ref{myearth}] \url{https://play.google.com/store/apps/details?id=com.ionicframework.myearthapp496614&hl=en_CA&gl=US}
+\refinit{myearth} \url{https://play.google.com/store/apps/details?id=com.ionicframework.myearthapp496614&hl=en_CA&gl=US}
 
-\noindent [\ref{capture}] \url{https://play.google.com/store/apps/dev?id=7417037584465272817&hl=en_CA&gl=US}
+\refinit{capture} \url{https://play.google.com/store/apps/dev?id=7417037584465272817&hl=en_CA&gl=US}
 
 
 
