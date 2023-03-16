@@ -48,7 +48,7 @@ module.exports = {
         printWidth: 80,
         bracketSameLine: false,
         trailingComma: 'all',
-        endOfLine: 'lf',
+        endOfLine: 'auto',
       },
     ],
     'eol-last': ['error', 'always'],
