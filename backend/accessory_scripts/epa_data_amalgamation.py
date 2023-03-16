@@ -1,3 +1,5 @@
+# This script analyzes datafiles to extract vehicle mass and drag coefficient data
+
 import os
 import pandas as pd
 import numpy as np
@@ -38,15 +40,10 @@ all_cols = year + mfr + model + weight
 for yr, df in data.items():
     good_cols = []
     for col_name in df.columns:
-        if col_name in all_cols:  # or any([col in col_name for col in all_cols]):
+        if col_name in all_cols:
             good_cols.append(col_name)
 
     data[yr] = df[good_cols]
-
-# for df in data.values():
-#     print(df.head())
-#     print()
-
 
 weight_data = None
 for df in data.values():
@@ -400,14 +397,10 @@ for line in res:
 
 cda = pd.DataFrame(cda, columns=['year', 'make', 'model', 'cda'])
 
-print(cda.head())
-print(weight_data.head())
-
 cda.cda = cda.cda.astype(float)
 cda.year = cda.year.astype(int)
 weight_data.weight = weight_data.weight.astype(float)
 weight_data.year = weight_data.year.astype(int)
-
 
 makes = list(cda.make)
 models = list(cda.model)
@@ -428,7 +421,6 @@ cda.model = models
 
 cda_on_m = np.empty(len(cda)) * np.nan
 
-
 for i in range(len(cda)):
     print(f'{i}/{len(cda)}')
     year, make, model = cda.iloc[i].year, cda.iloc[i].make, cda.iloc[i].model
@@ -439,7 +431,6 @@ for i in range(len(cda)):
 
     if sub_df.empty:
         continue
-    
 
     cdaonm = cda.iloc[i].cda / (sub_df.iloc[0].weight * 0.45359237)
     if cdaonm > 1e-6:
