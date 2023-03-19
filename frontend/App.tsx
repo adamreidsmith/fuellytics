@@ -3,9 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as Font from 'expo-font';
-import { useEffect, useState } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { pages, privatePages } from './pages';
 
 const Tab = createBottomTabNavigator();
