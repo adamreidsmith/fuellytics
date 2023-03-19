@@ -1,6 +1,10 @@
 import { Text, View, StyleSheet } from 'react-native';
 
-const HomePage = () => <View style={styles.container}>Homepage</View>;
+const HomePage = () => (
+  <View style={styles.container}>
+    <Text>Homepage</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
