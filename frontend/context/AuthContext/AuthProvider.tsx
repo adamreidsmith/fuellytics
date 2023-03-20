@@ -12,6 +12,7 @@ import { AuthContext } from './AuthContext';
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const { navigate } = useNavigation();
   const { user, status, refetch } = useCurrentUser();
+
   const { mutateAsync: logout } = useLogout({
     onSuccess: (data) => {
       if (data.success) {

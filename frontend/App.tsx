@@ -30,7 +30,7 @@ function PrivateTabs() {
             iconName = focused ? 'ios-basket' : 'ios-basket-outline';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#6536F9',
         tabBarInactiveTintColor: '#9FA5C0',
