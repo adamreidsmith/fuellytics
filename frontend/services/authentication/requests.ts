@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MutationFunction, QueryFunction, QueryKey } from 'react-query';
 import API from '../api';
 import {
@@ -23,13 +24,18 @@ export const getCurrentUser: QueryFunction<
     AuthenticationSchema.parse(result.data),
   );
 
+const setCookie = async (cookie: string) => {
+  await AsyncStorage.setItem('csrfmiddlewaretoken', cookie);
+};
+
 export const getCSRFToken: QueryFunction<
   GetCSRFTokenResponse,
   QueryKey
 > = async () =>
-  API.get('api/accounts/csrf_cookie').then((result) =>
-    GetCSRFTokenSchema.parse(result.data),
-  );
+  API.get('api/accounts/csrf_cookie').then(async (result) => {
+    setCookie(JSON.stringify(result.headers['set-cookie']?.at(0)));
+    return GetCSRFTokenSchema.parse(result.data);
+  });
 
 export const logout: MutationFunction<LogoutReponse> = async () =>
   API.delete('api/accounts/logout').then((result) =>

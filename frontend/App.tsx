@@ -7,6 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { QueryClientProvider } from 'react-query';
 import queryClient from 'services/queryClient';
 import { AuthProvider } from 'context/AuthContext/AuthProvider';
+import { useAuthContext } from 'context/AuthContext';
 import { pages, privatePages } from './pages';
 
 const Tab = createBottomTabNavigator();
@@ -42,18 +43,27 @@ function PrivateTabs() {
   );
 }
 
-const Navigator = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    {/* <Stack.Screen name="HomePage" component={PrivateTabs} /> */}
-    {pages.map(({ page, name }) => (
-      <Stack.Screen key={name} name={name} component={page} />
-    ))}
-  </Stack.Navigator>
-);
+const Navigator = () => {
+  const { user, status } = useAuthContext();
+
+  if (status === 'loading') return null;
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {user ? (
+        <Stack.Screen name="HomePage" component={PrivateTabs} />
+      ) : (
+        pages.map(({ page, name }) => (
+          <Stack.Screen key={name} name={name} component={page} />
+        ))
+      )}
+    </Stack.Navigator>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

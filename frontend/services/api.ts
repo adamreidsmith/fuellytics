@@ -1,6 +1,20 @@
 import axios from 'axios';
 import { camelizeKeys, decamelizeKeys } from 'humps';
 import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+function extractCsrfToken(setCookieHeader: string) {
+  const cookies = setCookieHeader.split('; ');
+
+  for (let i = 0; i < cookies.length; i += 1) {
+    const cookie = cookies[i].split('=');
+
+    if (cookie[0] === '"csrftoken') {
+      return cookie[1];
+    }
+  }
+  return null;
+}
 
 export const API = axios.create({
   baseURL: API_URL,
@@ -10,8 +24,14 @@ export const API = axios.create({
 });
 
 API.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const newConfig = { ...config };
+
+    const CSRFToken = await AsyncStorage.getItem('csrfmiddlewaretoken');
+
+    if (CSRFToken) {
+      newConfig.headers['X-CSRFToken'] = extractCsrfToken(CSRFToken);
+    }
 
     if (
       newConfig.headers &&
