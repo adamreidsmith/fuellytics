@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, Button, StyleSheet, Text, Image } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import { useCSRFToken } from 'services/authentication';
 
 const LoginForm = () => {
   const {
@@ -15,9 +16,12 @@ const LoginForm = () => {
     defaultValues: {
       username: '',
       password: '',
+      csrfmiddlewaretoken: '',
     },
   });
   const { navigate } = useNavigation();
+
+  useCSRFToken();
 
   const onSubmit: SubmitHandler<{ username: string; password: string }> = (
     data,
