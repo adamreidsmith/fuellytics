@@ -21,9 +21,15 @@ function PrivateTabs() {
           if (route.name === 'HomePage') {
             iconName = focused ? 'ios-home' : 'ios-home-outline';
           } else if (route.name === 'MapPage') {
-            iconName = focused ? 'ios-search' : 'ios-search-outline';
+            iconName = focused ? 'ios-navigate' : 'ios-navigate-outline';
           } else if (route.name === 'IMUPage') {
             iconName = focused ? 'ios-basket' : 'ios-basket-outline';
+          } else if (route.name === 'ReportsPage') {
+            iconName = focused ? 'ios-document' : 'ios-document-outline';
+          } else if (route.name === 'SummaryPage') {
+            iconName = focused ? 'ios-calendar' : 'ios-calendar-outline';
+          } else if (route.name === 'RTTrackPage') {
+            iconName = focused ? 'ios-search' : 'ios-search-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;

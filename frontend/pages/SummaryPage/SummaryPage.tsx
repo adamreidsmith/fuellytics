@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Image, Button, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const HomePage = () => {
+const SummaryPage = () => {
   const { navigate } = useNavigation();
 
   return (
@@ -18,25 +18,21 @@ const HomePage = () => {
       </View>
       <View style={styles.content}>
         <Image
-          style={styles.userpic}
-          source={require('../../assets/icons/user.png')}
+          style={styles.pic}
+          source={require('../../assets/icons/tick.png')}
         />
-        <Text style={styles.username}>Username</Text>
-        <Text style={styles.contentheader}>Car Profile</Text>
+        <Text style={styles.contentheader}>Fuellytics Summary</Text>
         <View style={styles.line} />
         <View style={styles.details}>
-          <Text>Car Model:</Text>
-          <Text>Year:</Text>
-          <Text>Engine Displacement Interval:</Text>
-          <Text>Fuel System:</Text>
-          <Text>Bore x Stroke:</Text>
-          <Text>No. of cylinder:</Text>
+          <Text>Time:</Text>
+          <Text>Gas consumption:</Text>
+          <Text>Gas emission:</Text>
         </View>
         <View style={styles.button}>
           <Button
-            title="Sign Out"
+            title="Back"
             onPress={() => {
-              navigate('LoginPage' as never, {} as never);
+              navigate('HomePage' as never, {} as never);
             }}
           />
         </View>
@@ -77,49 +73,42 @@ const styles = StyleSheet.create({
   content: {
     position: 'relative',
   },
-  userpic: {
+  pic: {
     position: 'absolute',
-    height: 180,
-    width: 180,
-    left: 105,
-    top: 170,
+    height: 251,
+    width: 251,
+    left: 70,
+    top: 235,
     borderRadius: 0,
-  },
-  username: {
-    position: 'absolute',
-    width: 278,
-    height: 37,
-    left: 57,
-    top: 360,
-    fontSize: 35,
-    textAlign: 'center',
-    color: '#000000',
   },
   contentheader: {
     position: 'absolute',
-    width: 99,
-    height: 20,
-    left: 25,
-    top: 430,
+    height: 50,
+    width: 330,
+    left: 31,
+    top: 506,
     fontSize: 20,
     color: '#000000',
+    textAlign: 'center',
   },
   line: {
     position: 'absolute',
-    width: 335,
+    width: 350,
     height: 0,
-    left: 25,
-    top: 460,
+    left: 20,
+    top: 541,
     borderWidth: 1,
     borderColor: '#000000',
     borderStyle: 'solid',
   },
   details: {
     position: 'absolute',
-    width: 340,
-    height: 110,
-    left: 20,
-    top: 470,
+    width: 148,
+    height: 54,
+    left: 47,
+    top: 556,
+    fontSize: 18,
+    alignItems: 'flex-end',
   },
   button: {
     position: 'absolute',
@@ -132,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default SummaryPage;

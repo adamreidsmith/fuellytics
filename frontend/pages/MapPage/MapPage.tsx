@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import { View, StyleSheet, Text, Button, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
+import { useNavigation } from '@react-navigation/native';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
 const MapPage = () => {
+  const { navigate } = useNavigation();
+
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
@@ -63,10 +66,21 @@ const MapPage = () => {
   const onEnd = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
+    navigate('SummaryPage' as never, {} as never);
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          style={styles.logo}
+          source={require('../../assets/logos/car-logo-removebg-preview.png')}
+        />
+        <Image
+          style={styles.logoname}
+          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
+        />
+      </View>
       <MapView
         style={styles.map}
         initialRegion={{
@@ -85,12 +99,25 @@ const MapPage = () => {
         />
       </MapView>
       <View style={styles.bottomSheet}>
-        <Text>Fuel consumption analysis</Text>
-        <Text>Time</Text>
-        <Text>Latitude</Text>
-        <Text>Longitude</Text>
-        <Text>Current Gas consumption</Text>
-        <Text>Gas emission</Text>
+        <Text style={styles.contentheader}>Fuel consumption analysis</Text>
+        <View style={styles.line} />
+        <View style={styles.detail}>
+          <Text>Time:</Text>
+          <Text>Latitude:</Text>
+          <Text>Longitude:</Text>
+          <Text>Current Gas consumption:</Text>
+          <Text>Gas emission:</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigate('RTTrackPage' as never, {} as never);
+          }}
+        >
+          <Image
+            style={styles.zoominicon}
+            source={require('../../assets/icons/zoom-in.png')}
+          />
+        </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <Button
             onPress={isRecording ? onEnd : onStart}
@@ -124,8 +151,11 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   map: {
-    width: '100%',
-    height: '100%',
+    position: 'absolute',
+    width: 390,
+    height: 398,
+    left: 0,
+    top: 152,
   },
   bubble: {
     flex: 1,
@@ -145,18 +175,81 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   bottomSheet: {
-    padding: 24,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 9999,
-    backgroundColor: 'white',
+    // padding: 24,
+    // position: 'absolute',
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
+    // zIndex: 9999,
+    // backgroundColor: 'white',
+    position: 'relative',
+    // height: 254,
+    // width: 390,
+    // left: 0,
+    // top: 550,
   },
   buttonContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
+    position: 'absolute',
+    height: 64,
+    width: 390,
+    left: 0,
+    top: 690,
     justifyContent: 'space-around',
+  },
+  header: {
+    position: 'absolute',
+    width: 390,
+    height: 152,
+    left: 0,
+    top: 0,
+    backgroundColor: '#AAAAAA',
+  },
+  logo: {
+    position: 'absolute',
+    width: 70,
+    height: 60,
+    left: 26,
+    top: 66,
+  },
+  logoname: {
+    position: 'absolute',
+    width: 250,
+    height: 40,
+    left: 126,
+    top: 76,
+  },
+  contentheader: {
+    position: 'absolute',
+    height: 40,
+    width: 319,
+    left: 11,
+    top: 560,
+    fontSize: 20,
+    color: '#000000',
+    textAlign: 'left',
+  },
+  zoominicon: {
+    position: 'absolute',
+    height: 24,
+    width: 24,
+    left: 356,
+    top: 560,
+  },
+  line: {
+    position: 'absolute',
+    width: 370,
+    height: 0,
+    left: 10,
+    top: 590,
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderStyle: 'solid',
+  },
+  detail: {
+    position: 'absolute',
+    height: 140,
+    width: 390,
+    left: 11,
+    top: 600,
   },
 });
