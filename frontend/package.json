@@ -42,6 +42,7 @@
     "react-native-web": "~0.18.7",
     "react-native-webview": "11.23.1",
     "react-query": "^3.39.3",
+    "set-cookie-parser": "^2.6.0",
     "socket.io": "^4.6.0",
     "socket.io-client": "^4.6.0",
     "zod": "^3.21.4"
@@ -53,6 +54,7 @@
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
     "@types/react-native-vector-icons": "^6.4.13",
+    "@types/set-cookie-parser": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
