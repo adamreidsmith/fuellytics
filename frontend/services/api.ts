@@ -3,17 +3,17 @@ import { camelizeKeys, decamelizeKeys } from 'humps';
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function extractCsrfToken(setCookieHeader: string) {
-  const cookies = setCookieHeader.split('; ');
+function getCsrfToken(cookieString: string): string | undefined {
+  const tokenCookie = cookieString
+    .split(/, |; /)
+    .find((cookie) => cookie.startsWith('csrftoken='));
 
-  for (let i = 0; i < cookies.length; i += 1) {
-    const cookie = cookies[i].split('=');
-
-    if (cookie[0] === '"csrftoken') {
-      return cookie[1];
-    }
+  if (!tokenCookie) {
+    return undefined;
   }
-  return null;
+  const tokenValue = tokenCookie.split('=')[1];
+
+  return tokenValue;
 }
 
 export const API = axios.create({
@@ -27,10 +27,13 @@ API.interceptors.request.use(
   async (config) => {
     const newConfig = { ...config };
 
-    const CSRFToken = await AsyncStorage.getItem('csrfmiddlewaretoken');
+    const CSRFTokenString =
+      (await AsyncStorage.getItem('csrfmiddlewaretoken')) || '';
+
+    const CSRFToken = CSRFTokenString.substring(1, CSRFTokenString.length - 1);
 
     if (CSRFToken) {
-      newConfig.headers['X-CSRFToken'] = extractCsrfToken(CSRFToken);
+      newConfig.headers['X-CSRFToken'] = getCsrfToken(CSRFToken);
     }
 
     if (
