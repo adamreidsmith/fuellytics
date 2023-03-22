@@ -1,10 +1,36 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { useAuthContext } from 'context/AuthContext';
+import { Text, View, StyleSheet, Button } from 'react-native';
+import { useCSRFToken } from 'services/authentication';
+import RNPickerSelect from 'react-native-picker-select';
+import { useState } from 'react';
+import { useCars } from 'services/cars';
 
-const HomePage = () => (
-  <View style={styles.container}>
-    <Text>Homepage</Text>
-  </View>
-);
+const HomePage = () => {
+  const { logout, user } = useAuthContext();
+  const [carModel, setCarModel] = useState(undefined);
+
+  useCSRFToken();
+
+  const { cars } = useCars();
+
+  return (
+    <View style={styles.container}>
+      <Text>Hello {user?.username}</Text>
+      <View>
+        <RNPickerSelect
+          value={carModel}
+          onValueChange={(value: any) => setCarModel(value)}
+          items={[
+            { label: 'Football', value: 'football' },
+            { label: 'Baseball', value: 'baseball' },
+            { label: 'Hockey', value: 'hockey' },
+          ]}
+        />
+      </View>
+      <Button title="Logout" onPress={() => logout()} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
