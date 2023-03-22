@@ -2,6 +2,8 @@ import React from 'react';
 import { View, TextInput, Button, StyleSheet, Text, Image } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import { useCSRFToken } from 'services/authentication';
+import { useAuthContext } from 'context/AuthContext';
 
 const LoginForm = () => {
   const {
@@ -17,12 +19,18 @@ const LoginForm = () => {
       password: '',
     },
   });
+  const { login } = useAuthContext();
   const { navigate } = useNavigation();
+
+  useCSRFToken();
 
   const onSubmit: SubmitHandler<{ username: string; password: string }> = (
     data,
   ) => {
-    console.log(data);
+    login({
+      username: data.username,
+      password: data.password,
+    });
   };
 
   return (
@@ -43,7 +51,7 @@ const LoginForm = () => {
             style={styles.input}
             onChangeText={onChange}
             value={value}
-            placeholder="Email"
+            placeholder="Username"
           />
         )}
       />

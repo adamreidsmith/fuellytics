@@ -1,8 +1,20 @@
-import { Text, View, StyleSheet, Image, Button, Alert } from 'react-native';
+import { Text, View, StyleSheet, Image, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAuthContext } from 'context/AuthContext';
+import { useCSRFToken } from 'services/authentication';
+import RNPickerSelect from 'react-native-picker-select';
+import { useState } from 'react';
+import { useCars } from 'services/cars';
 
 const HomePage = () => {
   const { navigate } = useNavigation();
+
+  const { logout, user } = useAuthContext();
+  const [carModel, setCarModel] = useState(undefined);
+
+  useCSRFToken();
+
+  const { cars } = useCars();
 
   return (
     <View style={styles.container}>
@@ -21,26 +33,20 @@ const HomePage = () => {
           style={styles.userpic}
           source={require('../../assets/icons/user.png')}
         />
-        <Text style={styles.username}>Username</Text>
-        <Text style={styles.contentheader}>Car Profile</Text>
-        <View style={styles.line} />
-        <View style={styles.details}>
-          <Text>Car Model:</Text>
-          <Text>Year:</Text>
-          <Text>Engine Displacement Interval:</Text>
-          <Text>Fuel System:</Text>
-          <Text>Bore x Stroke:</Text>
-          <Text>No. of cylinder:</Text>
-        </View>
-        <View style={styles.button}>
-          <Button
-            title="Sign Out"
-            onPress={() => {
-              navigate('LoginPage' as never, {} as never);
-            }}
-          />
-        </View>
+        <Text>Hello {user?.username}</Text>
       </View>
+      <View>
+        <RNPickerSelect
+          value={carModel}
+          onValueChange={(value: any) => setCarModel(value)}
+          items={[
+            { label: 'Football', value: 'football' },
+            { label: 'Baseball', value: 'baseball' },
+            { label: 'Hockey', value: 'hockey' },
+          ]}
+        />
+      </View>
+      <Button title="Logout" onPress={() => logout()} />
     </View>
   );
 };
@@ -48,9 +54,38 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 4,
+    marginTop: 4,
+    width: '80%',
+  },
+  loginText: {
+    fontSize: 16,
+    color: '#91919F',
+  },
+  loginButton: {
+    color: '#6536F9',
+  },
+  loginTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  altLogo: {
+    height: 105,
+    width: 320,
+  },
+  altLogoContainer: {
+    marginBottom: 16,
+  },
+  error: {
+    color: '#FF0000',
   },
   header: {
     position: 'absolute',

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, Image } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import { useCSRFToken, useRegister } from 'services/authentication';
+import { useAuthContext } from 'context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RegisterForm = () => {
   const {
@@ -16,14 +19,22 @@ const RegisterForm = () => {
       password: '',
     },
   });
+
+  const { register } = useAuthContext();
   const { navigate } = useNavigation();
+
+  useCSRFToken();
 
   const onSubmit: SubmitHandler<{
     email: string;
     username: string;
     password: string;
   }> = (data) => {
-    console.log(data);
+    register({
+      email: data.email,
+      password: data.password,
+      username: data.username,
+    });
   };
 
   return (

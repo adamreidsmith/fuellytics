@@ -4,6 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { QueryClientProvider } from 'react-query';
+import queryClient from 'services/queryClient';
+import { AuthProvider } from 'context/AuthContext/AuthProvider';
+import { useAuthContext } from 'context/AuthContext';
 import { pages, privatePages } from './pages';
 
 const Tab = createBottomTabNavigator();
@@ -32,7 +36,7 @@ function PrivateTabs() {
             iconName = focused ? 'ios-search' : 'ios-search-outline';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#6536F9',
         tabBarInactiveTintColor: '#9FA5C0',
@@ -45,25 +49,38 @@ function PrivateTabs() {
   );
 }
 
-const Navigator = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen name="HomePage" component={PrivateTabs} />
-    {/* {pages.map(({ page, name }) => (
-      <Stack.Screen key={name} name={name} component={page} />
-    ))} */}
-  </Stack.Navigator>
-);
+const Navigator = () => {
+  const { user, status } = useAuthContext();
+
+  if (status === 'loading') return null;
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {user ? (
+        <Stack.Screen name="HomePage" component={PrivateTabs} />
+      ) : (
+        pages.map(({ page, name }) => (
+          <Stack.Screen key={name} name={name} component={page} />
+        ))
+      )}
+    </Stack.Navigator>
+  );
+};
 
 const App = () => (
-  <GestureHandlerRootView style={{ flex: 1 }}>
-    <NavigationContainer>
-      <Navigator />
-    </NavigationContainer>
-  </GestureHandlerRootView>
+  <QueryClientProvider client={queryClient}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <AuthProvider>
+          <Navigator />
+        </AuthProvider>
+      </NavigationContainer>
+    </GestureHandlerRootView>
+  </QueryClientProvider>
 );
 
 export default App;
