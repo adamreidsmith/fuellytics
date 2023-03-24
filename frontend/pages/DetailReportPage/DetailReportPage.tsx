@@ -1,23 +1,23 @@
 import { useState } from 'react';
 import {
+  Text,
   View,
   StyleSheet,
-  Text,
-  Button,
   Image,
+  Button,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
-import { useNavigation } from '@react-navigation/native';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
-const MapPage = () => {
+const DetailReportPage = () => {
   const { navigate } = useNavigation();
-
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
@@ -115,39 +115,10 @@ const MapPage = () => {
           <Text>Current Gas consumption:</Text>
           <Text>Gas emission:</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigate('RTTrackPage' as never, {} as never);
-          }}
-        >
-          <Image
-            style={styles.zoominicon}
-            source={require('../../assets/icons/zoom-in.png')}
-          />
-        </TouchableOpacity>
-        <View style={styles.buttonContainer}>
-          <Button
-            onPress={isRecording ? onEnd : onStart}
-            title={
-              // eslint-disable-next-line no-nested-ternary
-              isRecording
-                ? 'Stop'
-                : routeCoordinates.length > 0
-                ? 'Continue recording'
-                : 'Start'
-            }
-            color="#841584"
-          />
-          {routeCoordinates.length > 0 && !isRecording && (
-            <Button onPress={onEnd} title="Finalize" color="#841584" />
-          )}
-        </View>
       </View>
     </View>
   );
 };
-
-export default MapPage;
 
 const styles = StyleSheet.create({
   container: {
@@ -181,28 +152,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
   },
-  bottomSheet: {
-    // padding: 24,
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
-    // zIndex: 9999,
-    // backgroundColor: 'white',
-    position: 'relative',
-    // height: 254,
-    // width: 390,
-    // left: 0,
-    // top: 550,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    height: 64,
-    width: 390,
-    left: 0,
-    top: 690,
-    justifyContent: 'space-around',
-  },
   header: {
     position: 'absolute',
     width: 390,
@@ -225,22 +174,27 @@ const styles = StyleSheet.create({
     left: 126,
     top: 76,
   },
+  content: {
+    position: 'relative',
+  },
+  filtericon: {
+    position: 'absolute',
+    height: 27,
+    width: 27,
+    left: 353,
+    top: 170,
+    borderRadius: 0,
+  },
   contentheader: {
     position: 'absolute',
-    height: 40,
-    width: 319,
-    left: 11,
-    top: 560,
-    fontSize: 20,
-    color: '#000000',
-    textAlign: 'left',
+    height: 27,
+    width: 163,
+    left: 20,
+    top: 170,
+    fontSize: 24,
   },
-  zoominicon: {
-    position: 'absolute',
-    height: 24,
-    width: 24,
-    left: 356,
-    top: 560,
+  bottomSheet: {
+    position: 'relative',
   },
   line: {
     position: 'absolute',
@@ -260,3 +214,5 @@ const styles = StyleSheet.create({
     top: 600,
   },
 });
+
+export default DetailReportPage;
