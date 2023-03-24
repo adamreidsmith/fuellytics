@@ -6,7 +6,8 @@ import MapPage from './pages/MapPage';
 import ReportsPage from './pages/ReportsPage';
 import SummaryPage from './pages/SummaryPage';
 import RTTrackPage from './pages/RTTrackPage';
-// import TestPage from './pages/TestPage';
+import CarProfilePage from './pages/CarProfilePage';
+import DetailReportPage from './pages/DetailReportPage';
 
 export const pages = [
   {
@@ -36,18 +37,22 @@ export const privatePages = [
     page: ReportsPage,
     name: 'ReportsPage',
   },
-  {
-    page: SummaryPage,
-    name: 'SummaryPage',
-  },
+  // {
+  //   page: SummaryPage,
+  //   name: 'SummaryPage',
+  // },
   {
     page: RTTrackPage,
     name: 'RTTrackPage',
   },
-  // {
-  //   page: TestPage,
-  //   name: 'TestPage',
-  // },
+  {
+    page: CarProfilePage,
+    name: 'CarProfilePage',
+  },
+  {
+    page: DetailReportPage,
+    name: 'DetailReportPage',
+  },
 ] as const;
 
 export type ParamList = {

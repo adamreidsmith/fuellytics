@@ -15,6 +15,13 @@ const HomePage = () => {
   useCSRFToken();
 
   const { cars } = useCars();
+  // const items = [
+  //   { label: 'Football', value: 'football' },
+  //   { label: 'Baseball', value: 'baseball' },
+  //   { label: 'Hockey', value: 'hockey' },
+  // ];
+
+  const items = [];
 
   return (
     <View style={styles.container}>
@@ -33,20 +40,32 @@ const HomePage = () => {
           style={styles.userpic}
           source={require('../../assets/icons/user.png')}
         />
-        <Text>Hello {user?.username}</Text>
+        <Text style={styles.username}>Hello, {user?.username}</Text>
+        <Text style={styles.contentheader}>Car Profile</Text>
+        <View style={styles.line} />
+        <View style={styles.cardetails}>
+          {items.length === 0 ? (
+            <View>
+              <Text>No car registered.</Text>
+              <Button
+                title="Add Car"
+                onPress={() => {
+                  navigate('CarProfilePage' as never, {} as never);
+                }}
+              />
+            </View>
+          ) : (
+            <RNPickerSelect
+              value={carModel}
+              onValueChange={(value: any) => setCarModel(value)}
+              items={items}
+            />
+          )}
+        </View>
+        <View style={styles.button}>
+          <Button title="Logout" onPress={() => logout()} />
+        </View>
       </View>
-      <View>
-        <RNPickerSelect
-          value={carModel}
-          onValueChange={(value: any) => setCarModel(value)}
-          items={[
-            { label: 'Football', value: 'football' },
-            { label: 'Baseball', value: 'baseball' },
-            { label: 'Hockey', value: 'hockey' },
-          ]}
-        />
-      </View>
-      <Button title="Logout" onPress={() => logout()} />
     </View>
   );
 };
@@ -54,8 +73,8 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   input: {
     borderWidth: 1,
@@ -149,19 +168,20 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     borderStyle: 'solid',
   },
-  details: {
+  cardetails: {
     position: 'absolute',
-    width: 340,
-    height: 110,
-    left: 20,
+    height: 200,
+    width: 335,
+    left: 25,
     top: 470,
+    backgroundColor: '#d3d3d3',
   },
   button: {
     position: 'absolute',
     height: 40,
     width: 120,
     left: 136,
-    top: 650,
+    top: 700,
     borderRadius: 2,
     backgroundColor: '#AAAAAA',
   },

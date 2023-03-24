@@ -31,7 +31,9 @@ function PrivateTabs() {
           } else if (route.name === 'ReportsPage') {
             iconName = focused ? 'ios-document' : 'ios-document-outline';
           } else if (route.name === 'SummaryPage') {
-            iconName = focused ? 'ios-calendar' : 'ios-calendar-outline';
+            iconName = focused
+              ? 'ios-checkmark-circle'
+              : 'ios-checkmark-circle-outline';
           } else if (route.name === 'RTTrackPage') {
             iconName = focused ? 'ios-search' : 'ios-search-outline';
           }
