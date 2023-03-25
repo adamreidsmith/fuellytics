@@ -15,4 +15,6 @@ export interface CarVariables
       QueryKey
     >,
     'queryKey' | 'queryFn' | 'getNextPageParam' | 'getPreviousPageParam'
-  > {}
+  > {
+  search?: string;
+}

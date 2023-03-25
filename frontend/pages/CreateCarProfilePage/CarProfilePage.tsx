@@ -5,91 +5,45 @@ import {
   View,
   Image,
   StyleSheet,
-  Button,
   TextInput,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import Checkbox from 'expo-checkbox';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
+import { useCars } from 'services/cars';
+import Header from 'components/Header';
+import Button from 'components/Button';
+import { FormattedCar } from './types';
 
 const CarProfile = () => {
   const { navigate } = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [isChecked, setChecked] = useState(false);
+  const [searchKey, setSearchKey] = useState('');
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
   const [carModel, setCarModel] = useState(undefined);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const items = [
-    {
-      id: '1',
-      title: 'JavaScript',
-      detail: 'Another line of data',
-    },
-    {
-      id: '2',
-      title: 'Java',
-      detail: 'Another line of data',
-    },
-    {
-      id: '3',
-      title: 'Ruby',
-      detail: 'Another line of data',
-    },
-    {
-      id: '4',
-      title: 'React Native',
-      detail: 'Another line of data',
-    },
-    {
-      id: '5',
-      title: 'PHP',
-      detail: 'Another line of data',
-    },
-    {
-      id: '6',
-      title: 'Python',
-      detail: 'Another line of data',
-    },
-    {
-      id: '7',
-      title: 'Go',
-      detail: 'Another line of data',
-    },
-    {
-      id: '8',
-      title: 'Swift',
-      detail: 'Another line of data',
-    },
-  ];
+  const [selectedItem, setSelectedItem] = useState<FormattedCar | null>(null);
+  const { cars } = useCars({ search: searchKey });
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logos/car-logo-removebg-preview.png')}
-        />
-        <Image
-          style={styles.logoname}
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
-        />
-      </View>
+      <Header />
       <View style={styles.content}>
-        <Text style={styles.contentheader}>Select Car Profile</Text>
+        <Text style={styles.contentheader}>Create Car Profile</Text>
         <View style={styles.searcharea}>
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnSubmit={false}
             onSelectItem={setSelectedItem}
-            // containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-            dataSet={items}
+            dataSet={cars}
+            onChangeText={(value) => setSearchKey(value)}
           />
         </View>
-        <View style={styles.imgarea}>
+        {/* <View style={styles.detail}>
           {JSON.stringify(selectedItem) === 'null' ? (
             <Text> </Text>
           ) : (
@@ -131,10 +85,29 @@ const CarProfile = () => {
               </View>
             </View>
           </Modal>
-        </View>
-        <View style={styles.buttom}>
+        </View> */}
+        <View style={styles.submitButton}>
           <Button
-            title="Back"
+            title="Create"
+            variant="primary"
+            onPress={() => {
+              navigate('HomePage' as never, {} as never);
+            }}
+          />
+        </View>
+        <View style={styles.submitButton}>
+          <Button
+            title="Enter my own car"
+            variant="success"
+            onPress={() => {
+              navigate('HomePage' as never, {} as never);
+            }}
+          />
+        </View>
+        <View style={styles.submitButton}>
+          <Button
+            title="Cancel"
+            variant="danger"
             onPress={() => {
               navigate('HomePage' as never, {} as never);
             }}
@@ -175,35 +148,28 @@ const styles = StyleSheet.create({
     top: 76,
   },
   content: {
-    position: 'relative',
-    alignContent: 'center',
-    justifyContent: 'center',
-    flex: 1,
+    padding: 24,
   },
   searcharea: {
-    position: 'absolute',
-    height: 40,
-    width: 345,
-    left: 23,
-    top: 220,
+    zIndex: 999,
   },
   imgarea: {
-    position: 'absolute',
-    height: 330,
-    width: 390,
-    left: 0,
-    top: 425,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // position: 'absolute',
+    // height: 330,
+    // width: 390,
+    // left: 0,
+    // top: 425,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   detail: {
-    position: 'relative',
-    height: 130,
-    width: 390,
-    left: 0,
-    top: 360,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // position: 'relative',
+    // height: 130,
+    // width: 390,
+    // left: 0,
+    // top: 360,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   popup: {
     // flex: 1,
@@ -214,29 +180,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    position: 'absolute',
-    fontSize: 16,
-    color: '#6536F9',
-    left: 136,
-    top: 700,
+    // position: 'absolute',
+    // fontSize: 16,
+    // color: '#6536F9',
+    // left: 136,
+    // top: 700,
   },
-  buttom: {
-    position: 'absolute',
-    width: 390,
-    height: 92,
-    left: 0,
-    top: 752,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#AAAAAA',
+  submitButton: {
+    marginTop: 16,
+    // position: 'absolute',
+    // width: 390,
+    // height: 92,
+    // left: 0,
+    // top: 752,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: '#AAAAAA',
   },
   contentheader: {
-    position: 'absolute',
-    height: 27,
-    width: 163,
-    left: 11,
-    top: 170,
     fontSize: 18,
+    marginBottom: 16,
   },
   input: {
     borderWidth: 1,

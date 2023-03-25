@@ -1,22 +1,40 @@
-import { Text, View, StyleSheet, Image } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Button as RNButton,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from 'context/AuthContext';
 import { useCSRFToken } from 'services/authentication';
 import { useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import Button from 'components/Button';
-import { useCarProfiles } from 'services/carProfile';
+import { useCarProfiles, useDeleteCarProfile } from 'services/carProfile';
 import Header from 'components/Header';
 import TextLink from 'components/TextLink';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import CarProfilePopup from './components/CarProfilePopup';
 
 const HomePage = () => {
   useCSRFToken();
+  const [isModalVisible, setModalVisible] = useState(false);
   const { navigate } = useNavigation();
 
   const { logout, user } = useAuthContext();
   const [carModel, setCarModel] = useState(undefined);
-  const { carsProfiles, fetchNextPage, status } = useCarProfiles({
+  const { carsProfiles, fetchNextPage, status, refetch } = useCarProfiles({
     userId: user?.id,
+  });
+
+  const { mutateAsync: deleteCarProfile } = useDeleteCarProfile({
+    onSuccess: (response) => {
+      setModalVisible(false);
+      navigate('HomePage' as never, {} as never);
+      refetch();
+    },
   });
 
   return (
@@ -41,7 +59,7 @@ const HomePage = () => {
               <Text style={styles.contentheader}>Loading...</Text>
             </View>
           ) : (
-            <View>
+            <View style={styles.listContainer}>
               {carsProfiles.length === 0 ? (
                 <View style={styles.emptyCase}>
                   <Text style={styles.contentheader}>No car registered.</Text>
@@ -59,7 +77,18 @@ const HomePage = () => {
                     estimatedItemSize={100}
                   />
                   {carsProfiles.map((car) => (
-                    <View key={car.id}>{car.car.model}</View>
+                    <View key={car.id} style={styles.cardContainer}>
+                      <Text>
+                        {car.car.model} - {car.car.make}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          deleteCarProfile({ carId: car.id.toString() });
+                        }}
+                      >
+                        <Ionicons name="close" size={24} />
+                      </TouchableOpacity>
+                    </View>
                   ))}
                 </View>
               )}
@@ -70,11 +99,17 @@ const HomePage = () => {
           <Button
             title="Add new car"
             onPress={() => {
-              navigate('CarProfilePage' as never, {} as never);
+              setModalVisible(true);
+              // navigate('CreateCarProfilePage' as never, {} as never);
             }}
           />
         </View>
       </View>
+      <CarProfilePopup
+        isModalVisible={isModalVisible}
+        setModalVisible={setModalVisible}
+        refetch={refetch}
+      />
     </View>
   );
 };
@@ -82,6 +117,19 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  cardContainer: {
+    padding: 12,
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFF',
+    marginBottom: 4,
+    borderRadius: 8,
+  },
+  listContainer: {
+    padding: 12,
   },
   logout: {
     position: 'absolute',
