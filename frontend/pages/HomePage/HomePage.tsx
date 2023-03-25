@@ -67,7 +67,12 @@ const HomePage = () => {
           )}
         </View>
         <View>
-          <Button title="Add new car" onPress={() => {}} />
+          <Button
+            title="Add new car"
+            onPress={() => {
+              navigate('CarProfilePage' as never, {} as never);
+            }}
+          />
         </View>
       </View>
     </View>
