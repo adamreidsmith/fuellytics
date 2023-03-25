@@ -9,7 +9,7 @@ export const getTrips: QueryFunction<TripResponse, QueryKey> = async ({
 }) => {
   const [_, variables] = queryKey as [unknown, {}];
 
-  return API.get('api/trips', {
+  return API.get('api/trips/', {
     params: { ...variables, page: pageParam },
   }).then(async (result) => TripResponseSchema.parse(result.data));
 };
@@ -18,4 +18,4 @@ export const createTrip: MutationFunction<
   TripResponse,
   CreateTripPayload
 > = async (payload) =>
-  API.post('api/trips', payload).then((result) => result.data);
+  API.post('api/trips/', payload).then((result) => result.data);

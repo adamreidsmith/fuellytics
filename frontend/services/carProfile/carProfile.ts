@@ -1,10 +1,11 @@
 import { AxiosError } from 'axios';
 import { useInfiniteQuery, useMutation } from 'react-query';
-import { createCarProfile, getCarProfiles } from './requests';
+import { createCarProfile, deleteCarProfile, getCarProfiles } from './requests';
 import {
   CarProfileReponse,
   CarProfileVariables,
   CreateCarProfileVariables,
+  DeleteCarProfileVariables,
 } from './types';
 
 export const useCarProfiles = ({
@@ -27,5 +28,12 @@ export const useCarProfiles = ({
   return { carsProfiles, status, refetch, fetchNextPage, hasNextPage };
 };
 
-export const useCreateCart = ({ ...opts }: CreateCarProfileVariables = {}) =>
+export const useCreateCarProfile = ({
+  ...opts
+}: CreateCarProfileVariables = {}) =>
   useMutation('createCarProfile', createCarProfile, { ...opts });
+
+export const useDeleteCarProfile = ({
+  ...opts
+}: DeleteCarProfileVariables = {}) =>
+  useMutation('deleteCarProfile', deleteCarProfile, { ...opts });

@@ -5,7 +5,11 @@ import {
   UseMutationOptions,
 } from 'react-query';
 import { z } from 'zod';
-import { CarProfileResponseSchema, CreateCartPayloadSchema } from './schema';
+import {
+  CarProfileResponseSchema,
+  CreateCarProfileSchema,
+  CreateCartPayloadSchema,
+} from './schema';
 
 export type CarProfileReponse = z.infer<typeof CarProfileResponseSchema>;
 
@@ -23,14 +27,31 @@ export interface CarProfileVariables
   userId?: number;
 }
 
+export type CreateCarProfileResponse = z.infer<typeof CreateCarProfileSchema>;
+
 export type CreateCartPayload = z.infer<typeof CreateCartPayloadSchema>;
 
 export interface CreateCarProfileVariables
   extends Omit<
     UseMutationOptions<
-      CarProfileReponse | undefined,
+      CreateCarProfileResponse,
       AxiosError,
       CreateCartPayload,
+      unknown
+    >,
+    'mutationFn' | 'mutationKey'
+  > {}
+
+export type DeleteCarProfileResponse = z.infer<typeof CreateCarProfileSchema>;
+
+export type DeleteCartPayload = z.infer<typeof CreateCartPayloadSchema>;
+
+export interface DeleteCarProfileVariables
+  extends Omit<
+    UseMutationOptions<
+      DeleteCarProfileResponse,
+      AxiosError,
+      DeleteCartPayload,
       unknown
     >,
     'mutationFn' | 'mutationKey'

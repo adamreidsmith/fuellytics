@@ -17,3 +17,12 @@ export const CarProfileResponseSchema = z.object({
 export const CreateCartPayloadSchema = z.object({
   carId: z.string(),
 });
+
+export const CreateCarProfileSchema = z.object({
+  success: z.boolean(),
+  data: z.object({
+    id: z.number(),
+    car: CarProfileSchema,
+    imageUrl: z.string().nullable(),
+  }),
+});

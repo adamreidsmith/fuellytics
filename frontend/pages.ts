@@ -6,7 +6,7 @@ import MapPage from './pages/MapPage';
 import ReportsPage from './pages/ReportsPage';
 import SummaryPage from './pages/SummaryPage';
 import RTTrackPage from './pages/RTTrackPage';
-import CarProfilePage from './pages/CarProfilePage';
+import CreateCarProfilePage from './pages/CreateCarProfilePage';
 import DetailReportPage from './pages/DetailReportPage';
 
 export const publicPages = [
@@ -45,8 +45,8 @@ export const pages = [
     name: 'SummaryPage',
   },
   {
-    page: CarProfilePage,
-    name: 'CarProfilePage',
+    page: CreateCarProfilePage,
+    name: 'CreateCarProfilePage',
   },
   {
     page: DetailReportPage,

@@ -23,11 +23,11 @@ import { MetricType } from './types';
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
-const socket = io(WEBSOCKET_URL, {
-  transports: ['websocket'],
-  upgrade: false,
-  reconnection: true,
-});
+// const socket = io(WEBSOCKET_URL, {
+//   transports: ['websocket'],
+//   upgrade: false,
+//   reconnection: true,
+// });
 
 const MapPage = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -35,18 +35,18 @@ const MapPage = () => {
     useState<MetricType>('ch4Emissions');
   const { navigate } = useNavigation();
   const { mutateAsync: createTrip } = useCreateTrip();
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connect');
-      setIsConnected(socket.connected);
-    });
+  // useEffect(() => {
+  //   socket.on('connect', () => {
+  //     console.log('connect');
+  //     setIsConnected(socket.connected);
+  //   });
 
-    socket.on('disconnect', () => {
-      setIsConnected(socket.connected);
-    });
-  }, []);
+  //   socket.on('disconnect', () => {
+  //     setIsConnected(socket.connected);
+  //   });
+  // }, []);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
