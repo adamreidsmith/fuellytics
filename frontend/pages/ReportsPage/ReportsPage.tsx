@@ -47,7 +47,7 @@ const ReportsPage = () => {
   return (
     <View style={styles.container}>
       <Header />
-      <View style={styles.content}>
+      <View style={styles.contentheadercontainer}>
         <Text style={styles.contentheader}>My Trips</Text>
         <TouchableOpacity onPress={toggleModal}>
           <Image
@@ -80,42 +80,41 @@ const ReportsPage = () => {
             </View>
           </Modal>
         </TouchableOpacity>
-
-        <ScrollView style={styles.triplist}>
-          <View style={styles.tripItem}>
-            <Button
-              title="Trip1"
-              onPress={() => {
-                navigate('DetailReportPage' as never, {} as never);
-              }}
-            />
-          </View>
-          <View style={styles.tripItem}>
-            <Button
-              title="Trip2"
-              onPress={() => {
-                navigate('DetailReportPage' as never, {} as never);
-              }}
-            />
-          </View>
-          <View style={styles.tripItem}>
-            <Button
-              title="Trip3"
-              onPress={() => {
-                navigate('DetailReportPage' as never, {} as never);
-              }}
-            />
-          </View>
-          <View style={styles.tripItem}>
-            <Button
-              title="Trip4"
-              onPress={() => {
-                navigate('DetailReportPage' as never, {} as never);
-              }}
-            />
-          </View>
-        </ScrollView>
       </View>
+      <ScrollView style={styles.triplist}>
+        <View style={styles.tripItem}>
+          <Button
+            title="Trip1"
+            onPress={() => {
+              navigate('DetailReportPage' as never, {} as never);
+            }}
+          />
+        </View>
+        <View style={styles.tripItem}>
+          <Button
+            title="Trip2"
+            onPress={() => {
+              navigate('DetailReportPage' as never, {} as never);
+            }}
+          />
+        </View>
+        <View style={styles.tripItem}>
+          <Button
+            title="Trip3"
+            onPress={() => {
+              navigate('DetailReportPage' as never, {} as never);
+            }}
+          />
+        </View>
+        <View style={styles.tripItem}>
+          <Button
+            title="Trip4"
+            onPress={() => {
+              navigate('DetailReportPage' as never, {} as never);
+            }}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -149,42 +148,37 @@ const styles = StyleSheet.create({
     left: 126,
     top: 76,
   },
-  content: {
-    position: 'relative',
-  },
   filtericon: {
-    position: 'absolute',
-    height: 27,
-    width: 27,
-    left: 353,
-    top: 170,
-    borderRadius: 0,
+    marginTop: 16,
+  },
+  contentheadercontainer: {
+    position: 'relative',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginRight: 10,
   },
   contentheader: {
-    position: 'absolute',
-    height: 27,
-    width: 163,
-    left: 20,
-    top: 170,
+    position: 'relative',
     fontSize: 24,
+    marginTop: 16,
   },
   triplist: {
-    height: 520,
-    width: 370,
-    left: 10,
-    top: 210,
+    position: 'relative',
+    width: 390,
+    alignContent: 'center',
   },
   tripItem: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 370,
-    height: 60,
     backgroundColor: '#D9D9D9',
     borderRadius: 20,
     borderWidth: 3,
     borderColor: '#fffff',
     marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
   },
   popup: {
     // flex: 1,
