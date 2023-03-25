@@ -1,23 +1,35 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  Button,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
+import Collapsible from 'react-native-collapsible';
 import { LocationObjectCoords } from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
-import Header from 'components/Header';
+import BottomSheet from '@gorhom/bottom-sheet';
+import Button from 'components/Button';
+import { useCreateTrip } from 'services/trips';
+import { io } from 'socket.io-client';
+import { metrics } from './constants';
+import { MetricType } from './types';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
+const socket = io('http://localhost:4000');
+
 const MapPage = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [openCollapsible, setOpenCollapsible] =
+    useState<MetricType>('ch4Emissions');
   const { navigate } = useNavigation();
+  const { mutateAsync: createTrip } = useCreateTrip();
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
@@ -26,6 +38,7 @@ const MapPage = () => {
   const [routeCoordinates, setRouteCoordinates] = useState<
     LocationObjectCoords[]
   >([]);
+  const hasStartedRecording = routeCoordinates.length > 0;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [locationSubscription, setLocationSubscription] =
     useState<Location.LocationSubscription | null>(null);
@@ -65,75 +78,115 @@ const MapPage = () => {
     setRouteCoordinates((state) => [...state, location.coords]);
   };
 
-  const onStart = () => {
+  const onStartRecording = () => {
     requestLocationPermission();
     subscribeToLocationUpdates();
     setIsRecording(true);
   };
 
-  const onEnd = () => {
+  const onPauseRecording = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
-    navigate('SummaryPage' as never, {} as never);
   };
 
+  const onEndRecording = () => {
+    unsubscribeFromLocationUpdates();
+    setIsRecording(false);
+    // SEND POST REQUEST, and on success navigate()
+  };
+
+  const onContinueRecording = () => {
+    subscribeToLocationUpdates();
+    setIsRecording(true);
+  };
+
+  const snapPoints = useMemo(
+    () => ['10%', hasStartedRecording ? '75%' : '13%'],
+    [hasStartedRecording],
+  );
+
   return (
-    <View style={styles.container}>
-      <Header />
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: location?.coords.latitude || LATITUDE,
-          longitude: location?.coords.longitude || LONGITUDE,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Polyline coordinates={routeCoordinates} strokeWidth={5} />
-        <Marker.Animated
-          coordinate={{
+    <View>
+      <View style={styles.container}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
             latitude: location?.coords.latitude || LATITUDE,
             longitude: location?.coords.longitude || LONGITUDE,
-          }}
-        />
-      </MapView>
-      <View style={styles.bottomSheet}>
-        <Text style={styles.contentheader}>Fuel consumption analysis</Text>
-        <View style={styles.line} />
-        <View style={styles.detail}>
-          <Text>Time:</Text>
-          <Text>Latitude:</Text>
-          <Text>Longitude:</Text>
-          <Text>Current Gas consumption:</Text>
-          <Text>Gas emission:</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigate('RTTrackPage' as never, {} as never);
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
         >
-          <Image
-            style={styles.zoominicon}
-            source={require('../../assets/icons/zoom-in.png')}
+          <Polyline coordinates={routeCoordinates} strokeWidth={5} />
+          <Marker.Animated
+            coordinate={{
+              latitude: location?.coords.latitude || LATITUDE,
+              longitude: location?.coords.longitude || LONGITUDE,
+            }}
           />
-        </TouchableOpacity>
-        <View style={styles.buttonContainer}>
-          <Button
-            onPress={isRecording ? onEnd : onStart}
-            title={
-              // eslint-disable-next-line no-nested-ternary
-              isRecording
-                ? 'Stop'
-                : routeCoordinates.length > 0
-                ? 'Continue recording'
-                : 'Start'
-            }
-            color="#841584"
-          />
-          {routeCoordinates.length > 0 && !isRecording && (
-            <Button onPress={onEnd} title="Finalize" color="#841584" />
+        </MapView>
+        <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
+          {hasStartedRecording ? (
+            <>
+              <View style={styles.detailsTitleContainer}>
+                <Text style={styles.detailsFont}>
+                  Fuel consumption analysis
+                </Text>
+              </View>
+              <View style={styles.details}>
+                {metrics.map((metric) => (
+                  <View key={metric.value} style={styles.collapsibleContainer}>
+                    <TouchableOpacity
+                      style={styles.collapsible}
+                      onPress={() => {
+                        setOpenCollapsible(metric.value);
+                      }}
+                    >
+                      <Text
+                        style={[styles.detailsFont, styles.collapsibleTitle]}
+                      >
+                        {metric.label}:
+                      </Text>
+                    </TouchableOpacity>
+                    <Collapsible collapsed={openCollapsible !== metric.value}>
+                      <Text>fuelConsumption</Text>
+                    </Collapsible>
+                  </View>
+                ))}
+                <View style={styles.buttonsContainer}>
+                  {isRecording ? (
+                    <Button
+                      title="Pause Recording"
+                      variant="secondary"
+                      onPress={() => onPauseRecording()}
+                    />
+                  ) : (
+                    <Button
+                      title="Continue recording"
+                      variant="success"
+                      onPress={() => onContinueRecording()}
+                    />
+                  )}
+                  <View style={styles.buttonsContainer}>
+                    <Button
+                      title="End Recording & Save"
+                      variant="danger"
+                      onPress={() => onEndRecording()}
+                    />
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : (
+            <View style={styles.detailsTitleContainer}>
+              <Text>Select a car to start</Text>
+              <Button
+                title="Start recording"
+                onPress={() => onStartRecording()}
+              />
+            </View>
           )}
-        </View>
+        </BottomSheet>
       </View>
     </View>
   );
@@ -142,19 +195,22 @@ const MapPage = () => {
 export default MapPage;
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    alignItems: 'center',
+  },
   container: {
-    flex: 1,
     position: 'relative',
+    height: '100%',
   },
   pepe: {
     color: 'red',
   },
   map: {
     position: 'absolute',
-    width: 390,
-    height: 398,
+    width: '100%',
+    height: Dimensions.get('window').height,
     left: 0,
-    top: 152,
+    top: 0,
   },
   bubble: {
     flex: 1,
@@ -172,20 +228,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: 'center',
     marginHorizontal: 10,
-  },
-  bottomSheet: {
-    // padding: 24,
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
-    // zIndex: 9999,
-    // backgroundColor: 'white',
-    position: 'relative',
-    // height: 254,
-    // width: 390,
-    // left: 0,
-    // top: 550,
   },
   buttonContainer: {
     position: 'absolute',
@@ -218,11 +260,6 @@ const styles = StyleSheet.create({
     top: 76,
   },
   contentheader: {
-    position: 'absolute',
-    height: 40,
-    width: 319,
-    left: 11,
-    top: 560,
     fontSize: 20,
     color: '#000000',
     textAlign: 'left',
@@ -235,20 +272,35 @@ const styles = StyleSheet.create({
     top: 560,
   },
   line: {
-    position: 'absolute',
-    width: 370,
-    height: 0,
-    left: 10,
-    top: 590,
     borderWidth: 1,
     borderColor: '#000000',
     borderStyle: 'solid',
   },
-  detail: {
-    position: 'absolute',
-    height: 140,
-    width: 390,
-    left: 11,
-    top: 600,
+  detailsTitleContainer: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  details: {
+    padding: 16,
+  },
+  detailsFont: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  collapsible: {
+    padding: 12,
+    backgroundColor: '#AAAAAA',
+    borderRadius: 8,
+  },
+  collapsibleTitle: {
+    color: '#FFFF',
+  },
+  collapsibleContainer: {
+    paddingBottom: 8,
+  },
+  buttonsContainer: {
+    paddingTop: 12,
   },
 });

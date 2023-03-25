@@ -4,6 +4,8 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo', 'module:metro-react-native-babel-preset'],
     plugins: [
+      'react-native-reanimated/plugin',
+      '@babel/plugin-proposal-export-namespace-from',
       'transform-inline-environment-variables',
       [
         'module:react-native-dotenv',

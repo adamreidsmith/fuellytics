@@ -5,12 +5,24 @@ import { ButtonProps } from './types';
 const Button: FC<ButtonProps> = ({ title, onPress, variant = 'primary' }) => (
   <TouchableOpacity
     style={
-      variant === 'primary' ? primaryStyles.button : secondaryStyles.button
+      {
+        primary: primaryStyles.button,
+        secondary: secondaryStyles.button,
+        danger: dangerStyles.button,
+        success: successStyles.button,
+      }[variant]
     }
     onPress={onPress}
   >
     <Text
-      style={variant === 'primary' ? primaryStyles.text : secondaryStyles.text}
+      style={
+        {
+          primary: primaryStyles.text,
+          secondary: secondaryStyles.text,
+          danger: dangerStyles.text,
+          success: successStyles.text,
+        }[variant]
+      }
     >
       {title}
     </Text>
@@ -22,7 +34,7 @@ const primaryStyles = StyleSheet.create({
     backgroundColor: '#007bff',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 4,
+    borderRadius: 8,
     alignItems: 'center',
   },
   text: {
@@ -39,11 +51,41 @@ const secondaryStyles = StyleSheet.create({
     borderColor: '#007bff',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 4,
+    borderRadius: 8,
     alignItems: 'center',
   },
   text: {
     color: '#007bff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+
+const dangerStyles = StyleSheet.create({
+  button: {
+    backgroundColor: '#ff1e00',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+
+const successStyles = StyleSheet.create({
+  button: {
+    backgroundColor: '#228f42f8',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  text: {
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },

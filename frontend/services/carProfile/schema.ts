@@ -1,5 +1,5 @@
 import { CarSchema } from 'services/cars';
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 export const CarProfileSchema = z.object({
   id: z.number(),
