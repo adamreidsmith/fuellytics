@@ -64,18 +64,6 @@ const DetailReportPage = () => {
     setRouteCoordinates((state) => [...state, location.coords]);
   };
 
-  const onStart = () => {
-    requestLocationPermission();
-    subscribeToLocationUpdates();
-    setIsRecording(true);
-  };
-
-  const onEnd = () => {
-    unsubscribeFromLocationUpdates();
-    setIsRecording(false);
-    navigate('SummaryPage' as never, {} as never);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -106,14 +94,24 @@ const DetailReportPage = () => {
         />
       </MapView>
       <View style={styles.bottomSheet}>
-        <Text style={styles.contentheader}>Fuel consumption analysis</Text>
-        <View style={styles.line} />
+        <Text style={styles.contentheader}>Trip Information</Text>
         <View style={styles.detail}>
-          <Text>Time:</Text>
-          <Text>Latitude:</Text>
-          <Text>Longitude:</Text>
-          <Text>Current Gas consumption:</Text>
-          <Text>Gas emission:</Text>
+          <Text>Total Time:</Text>
+          <Text>Departure:</Text>
+          <Text>Destination:</Text>
+          <Text>Gas consumption:</Text>
+          <Text>Approximate Expense:</Text>
+          <Text>CO2 emission:</Text>
+          <Text>Methane emission:</Text>
+          <Text>N2O emission:</Text>
+        </View>
+        <View style={styles.button}>
+          <Button
+            title="Back"
+            onPress={() => {
+              navigate('ReportsPage' as never, {} as never);
+            }}
+          />
         </View>
       </View>
     </View>
@@ -130,10 +128,9 @@ const styles = StyleSheet.create({
   },
   map: {
     position: 'absolute',
-    width: 390,
-    height: 398,
-    left: 0,
-    top: 152,
+    height: 310,
+    width: 389,
+    top: 200,
   },
   bubble: {
     flex: 1,
@@ -145,12 +142,6 @@ const styles = StyleSheet.create({
   latlng: {
     width: 200,
     alignItems: 'stretch',
-  },
-  button: {
-    width: 80,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    marginHorizontal: 10,
   },
   header: {
     position: 'absolute',
@@ -189,29 +180,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 27,
     width: 163,
-    left: 20,
+    left: 11,
     top: 170,
-    fontSize: 24,
+    fontSize: 18,
   },
   bottomSheet: {
     position: 'relative',
   },
-  line: {
-    position: 'absolute',
-    width: 370,
-    height: 0,
-    left: 10,
-    top: 590,
-    borderWidth: 1,
-    borderColor: '#000000',
-    borderStyle: 'solid',
-  },
   detail: {
     position: 'absolute',
-    height: 140,
-    width: 390,
-    left: 11,
-    top: 600,
+    height: 144,
+    width: 161,
+    left: 35,
+    top: 530,
+    fontSize: 18,
+    alignItems: 'flex-end',
+  },
+  button: {
+    position: 'absolute',
+    height: 40,
+    width: 120,
+    left: 136,
+    top: 700,
+    borderRadius: 2,
+    backgroundColor: '#AAAAAA',
   },
 });
 

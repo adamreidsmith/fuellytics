@@ -8,13 +8,15 @@ import {
   Image,
   Button,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import { useTrips } from 'services/trips';
+import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const ReportsPage = () => {
+  const { navigate } = useNavigation();
   const { user } = useAuthContext();
   const { trips, status } = useTrips({ userId: user?.id });
   const [selectedRange, setRange] = useState({});
@@ -22,6 +24,24 @@ const ReportsPage = () => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const [startdate, setstartDate] = useState(new Date(1598051730000));
+  const [stopdate, setstopDate] = useState(new Date(1598051730000));
+  const [show, setShow] = useState(true);
+
+  const onChangeStart = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(true);
+    setstartDate(currentDate);
+  };
+
+  const onChangeStop = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(true);
+    setstopDate(currentDate);
   };
 
   return (
@@ -36,24 +56,63 @@ const ReportsPage = () => {
           />
           <Modal isVisible={isModalVisible}>
             <View style={styles.popup}>
-              <Text>Hey</Text>
-              <Button title="Hide modal" onPress={toggleModal} />
+              <Text> Select Date Range</Text>
+              <Text>Start Date: </Text>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={startdate}
+                  mode="date"
+                  onChange={onChangeStart}
+                />
+              )}
+              <Text>Stop Date: </Text>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={stopdate}
+                  mode="date"
+                  onChange={onChangeStop}
+                />
+              )}
+              <Button title="Apply" />
+              <Button title="Cancel" onPress={toggleModal} />
             </View>
           </Modal>
         </TouchableOpacity>
 
         <ScrollView style={styles.triplist}>
           <View style={styles.tripItem}>
-            <Text>Trip 1</Text>
+            <Button
+              title="Trip1"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripItem}>
-            <Text>Trip 2</Text>
+            <Button
+              title="Trip2"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripItem}>
-            <Text>Trip 3</Text>
+            <Button
+              title="Trip3"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripItem}>
-            <Text>Trip 4</Text>
+            <Button
+              title="Trip4"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
         </ScrollView>
       </View>
