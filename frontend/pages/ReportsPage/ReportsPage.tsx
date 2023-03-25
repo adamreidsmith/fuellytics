@@ -1,4 +1,5 @@
 import Header from 'components/Header';
+import { useAuthContext } from 'context/AuthContext';
 import React, { useState } from 'react';
 import {
   Text,
@@ -10,11 +11,15 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import { useTrips } from 'services/trips';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const ReportsPage = () => {
   const { navigate } = useNavigation();
+  const { user } = useAuthContext();
+  const { trips, status } = useTrips({ userId: user?.id });
+  const [selectedRange, setRange] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -77,7 +82,7 @@ const ReportsPage = () => {
         </TouchableOpacity>
 
         <ScrollView style={styles.triplist}>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Button
               title="Trip1"
               onPress={() => {
@@ -85,7 +90,7 @@ const ReportsPage = () => {
               }}
             />
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Button
               title="Trip2"
               onPress={() => {
@@ -93,7 +98,7 @@ const ReportsPage = () => {
               }}
             />
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Button
               title="Trip3"
               onPress={() => {
@@ -101,7 +106,7 @@ const ReportsPage = () => {
               }}
             />
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Button
               title="Trip4"
               onPress={() => {
@@ -169,7 +174,7 @@ const styles = StyleSheet.create({
     left: 10,
     top: 210,
   },
-  tripitem: {
+  tripItem: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
