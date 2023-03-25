@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import { useNavigation } from '@react-navigation/native';
 
 const ReportsPage = () => {
+  const { navigate } = useNavigation();
   const [selectedRange, setRange] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -48,16 +50,36 @@ const ReportsPage = () => {
 
         <ScrollView style={styles.triplist}>
           <View style={styles.tripitem}>
-            <Text>Trip 1</Text>
+            <Button
+              title="Trip1"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripitem}>
-            <Text>Trip 2</Text>
+            <Button
+              title="Trip2"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripitem}>
-            <Text>Trip 3</Text>
+            <Button
+              title="Trip3"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
           <View style={styles.tripitem}>
-            <Text>Trip 4</Text>
+            <Button
+              title="Trip4"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
           </View>
         </ScrollView>
       </View>

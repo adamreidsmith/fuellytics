@@ -10,6 +10,7 @@ import {
   TextInput,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 const CarProfile = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -17,6 +18,42 @@ const CarProfile = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const [carModel, setCarModel] = useState(undefined);
+
+  const items = [
+    {
+      id: 1,
+      name: 'JavaScript',
+    },
+    {
+      id: 2,
+      name: 'Java',
+    },
+    {
+      id: 3,
+      name: 'Ruby',
+    },
+    {
+      id: 4,
+      name: 'React Native',
+    },
+    {
+      id: 5,
+      name: 'PHP',
+    },
+    {
+      id: 6,
+      name: 'Python',
+    },
+    {
+      id: 7,
+      name: 'Go',
+    },
+    {
+      id: 8,
+      name: 'Swift',
+    },
+  ];
 
   return (
     <View style={styles.container}>
@@ -31,11 +68,9 @@ const CarProfile = () => {
         />
       </View>
       <View style={styles.content}>
-        <TouchableOpacity onPress={toggleModal}>
-          <Image
-            style={styles.filtericon}
-            source={require('../../assets/icons/Filter-alt.png')}
-          />
+        <Text>Create Car Profile</Text>
+        <View style={styles.button}>
+          <Button title="Customize" onPress={toggleModal} />
           <Modal isVisible={isModalVisible}>
             <View style={styles.popup}>
               <Text>Add Car Information</Text>
@@ -55,7 +90,46 @@ const CarProfile = () => {
               <Button title="Cancle" onPress={toggleModal} />
             </View>
           </Modal>
-        </TouchableOpacity>
+        </View>
+        <SearchableDropdown
+          onItemSelect={(item) => {
+            const items = this.state.selectedItems;
+            items.push(item)
+            this.setState({ selectedItems: items });
+          }}
+          containerStyle={{ padding: 5 }}
+          onRemoveItem={(item, index) => {
+            const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
+            this.setState({ selectedItems: items });
+          }}
+          itemStyle={{
+            padding: 10,
+            marginTop: 2,
+            backgroundColor: '#ddd',
+            borderColor: '#bbb',
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
+          itemTextStyle={{ color: '#222' }}
+          itemsContainerStyle={{ maxHeight: 140 }}
+          items={items}
+          defaultIndex={2}
+          resetValue={false}
+          textInputProps={{
+            placeholder: 'placeholder',
+            underlineColorAndroid: 'transparent',
+            style: {
+              padding: 12,
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 5,
+            },
+            onTextChange: (text) => alert(text),
+          }}
+          listProps={{
+            nestedScrollEnabled: true,
+          }}
+        />
       </View>
     </View>
   );
@@ -92,6 +166,9 @@ const styles = StyleSheet.create({
   },
   content: {
     position: 'relative',
+    alignContent: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   filtericon: {
     position: 'absolute',
@@ -108,6 +185,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 1,
     backgroundColor: 'white',
+  },
+  button: {
+    position: 'absolute',
+    height: 40,
+    width: 120,
+    left: 136,
+    top: 700,
+    borderRadius: 2,
+    backgroundColor: '#AAAAAA',
   },
 });
 
