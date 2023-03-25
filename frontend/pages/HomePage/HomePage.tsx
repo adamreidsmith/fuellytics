@@ -66,7 +66,7 @@ const HomePage = () => {
             </View>
           )}
         </View>
-        <View style={styles.button}>
+        <View>
           <Button title="Add new car" onPress={() => {}} />
         </View>
       </View>
@@ -157,16 +157,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#d3d3d3',
     height: '50%',
     marginBottom: 16,
+    borderRadius: 8,
   },
   emptyCase: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-  },
-  button: {
-    borderRadius: 2,
-    backgroundColor: '#AAAAAA',
   },
 });
 
