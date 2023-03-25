@@ -8,7 +8,7 @@ import { QueryClientProvider } from 'react-query';
 import queryClient from 'services/queryClient';
 import { AuthProvider } from 'context/AuthContext/AuthProvider';
 import { useAuthContext } from 'context/AuthContext';
-import { pages, privatePages } from './pages';
+import { publicPages, navigatorPages, pages } from './pages';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,7 +44,7 @@ function PrivateTabs() {
         tabBarInactiveTintColor: '#9FA5C0',
       })}
     >
-      {privatePages.map(({ page, name }) => (
+      {navigatorPages.map(({ page, name }) => (
         <Tab.Screen key={name} name={name} component={page} />
       ))}
     </Tab.Navigator>
@@ -63,9 +63,14 @@ const Navigator = () => {
       }}
     >
       {user ? (
-        <Stack.Screen name="HomePage" component={PrivateTabs} />
+        <>
+          <Stack.Screen name="HomePage" component={PrivateTabs} />
+          {pages.map(({ page, name }) => (
+            <Stack.Screen key={name} name={name} component={page} />
+          ))}
+        </>
       ) : (
-        pages.map(({ page, name }) => (
+        publicPages.map(({ page, name }) => (
           <Stack.Screen key={name} name={name} component={page} />
         ))
       )}
