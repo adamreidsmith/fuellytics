@@ -15,7 +15,7 @@ const HomePage = () => {
 
   const { logout, user } = useAuthContext();
   const [carModel, setCarModel] = useState(undefined);
-  const { carsProfiles, fetchNextPage, hasNextPage } = useCarProfiles({
+  const { carsProfiles, fetchNextPage, status } = useCarProfiles({
     userId: user?.id,
   });
 
@@ -36,21 +36,33 @@ const HomePage = () => {
         <Text style={styles.contentheader}>My car list:</Text>
         <View style={styles.line} />
         <View style={styles.carList}>
-          {carsProfiles.length === 0 ? (
+          {status === 'loading' ? (
             <View style={styles.emptyCase}>
-              <Text style={styles.contentheader}>No car registered.</Text>
+              <Text style={styles.contentheader}>Loading...</Text>
             </View>
           ) : (
             <View>
-              <FlashList
-                data={carsProfiles}
-                renderItem={({ item }) => <View>{item.car.model}</View>}
-                onEndReached={fetchNextPage}
-                estimatedItemSize={100}
-              />
-              {carsProfiles.map((car) => (
-                <View key={car.id}>{car.car.model}</View>
-              ))}
+              {carsProfiles.length === 0 ? (
+                <View style={styles.emptyCase}>
+                  <Text style={styles.contentheader}>No car registered.</Text>
+                </View>
+              ) : (
+                <View>
+                  <FlashList
+                    data={carsProfiles}
+                    renderItem={({ item }) => (
+                      <View>
+                        <Text>{item.car.model}</Text>
+                      </View>
+                    )}
+                    onEndReached={fetchNextPage}
+                    estimatedItemSize={100}
+                  />
+                  {carsProfiles.map((car) => (
+                    <View key={car.id}>{car.car.model}</View>
+                  ))}
+                </View>
+              )}
             </View>
           )}
         </View>
