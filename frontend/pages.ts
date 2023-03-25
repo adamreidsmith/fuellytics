@@ -9,7 +9,7 @@ import RTTrackPage from './pages/RTTrackPage';
 import CarProfilePage from './pages/CarProfilePage';
 import DetailReportPage from './pages/DetailReportPage';
 
-export const pages = [
+export const publicPages = [
   {
     page: LoginPage,
     name: 'LoginPage',
@@ -20,7 +20,7 @@ export const pages = [
   },
 ] as const;
 
-export const privatePages = [
+export const navigatorPages = [
   {
     page: HomePage,
     name: 'HomePage',
@@ -37,13 +37,12 @@ export const privatePages = [
     page: ReportsPage,
     name: 'ReportsPage',
   },
-  // {
-  //   page: SummaryPage,
-  //   name: 'SummaryPage',
-  // },
+] as const;
+
+export const pages = [
   {
-    page: RTTrackPage,
-    name: 'RTTrackPage',
+    page: SummaryPage,
+    name: 'SummaryPage',
   },
   {
     page: CarProfilePage,
@@ -53,7 +52,11 @@ export const privatePages = [
     page: DetailReportPage,
     name: 'DetailReportPage',
   },
-] as const;
+  {
+    page: RTTrackPage,
+    name: 'RTTrackPage',
+  },
+];
 
 export type ParamList = {
   IMUPage: undefined;
