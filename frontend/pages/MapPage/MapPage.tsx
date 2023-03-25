@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { WEBSOCKET_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from '@env';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Collapsible from 'react-native-collapsible';
@@ -22,7 +23,11 @@ import { MetricType } from './types';
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
-const socket = io('http://localhost:4000');
+const socket = io(WEBSOCKET_URL, {
+  transports: ['websocket'],
+  upgrade: false,
+  reconnection: true,
+});
 
 const MapPage = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -30,6 +35,18 @@ const MapPage = () => {
     useState<MetricType>('ch4Emissions');
   const { navigate } = useNavigation();
   const { mutateAsync: createTrip } = useCreateTrip();
+  const [isConnected, setIsConnected] = useState(socket.connected);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('connect');
+      setIsConnected(socket.connected);
+    });
+
+    socket.on('disconnect', () => {
+      setIsConnected(socket.connected);
+    });
+  }, []);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
@@ -179,7 +196,7 @@ const MapPage = () => {
             </>
           ) : (
             <View style={styles.detailsTitleContainer}>
-              <Text>Select a car to start</Text>
+              <Text>Select a car to start: {JSON.stringify(isConnected)}</Text>
               <Button
                 title="Start recording"
                 onPress={() => onStartRecording()}
