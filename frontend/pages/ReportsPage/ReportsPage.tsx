@@ -1,4 +1,5 @@
 import Header from 'components/Header';
+import { useAuthContext } from 'context/AuthContext';
 import React, { useState } from 'react';
 import {
   Text,
@@ -11,8 +12,11 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import { useTrips } from 'services/trips';
 
 const ReportsPage = () => {
+  const { user } = useAuthContext();
+  const { trips, status } = useTrips({ userId: user?.id });
   const [selectedRange, setRange] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -39,16 +43,16 @@ const ReportsPage = () => {
         </TouchableOpacity>
 
         <ScrollView style={styles.triplist}>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Text>Trip 1</Text>
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Text>Trip 2</Text>
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Text>Trip 3</Text>
           </View>
-          <View style={styles.tripitem}>
+          <View style={styles.tripItem}>
             <Text>Trip 4</Text>
           </View>
         </ScrollView>
@@ -111,7 +115,7 @@ const styles = StyleSheet.create({
     left: 10,
     top: 210,
   },
-  tripitem: {
+  tripItem: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
