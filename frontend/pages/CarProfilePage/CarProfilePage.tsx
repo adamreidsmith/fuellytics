@@ -10,10 +10,13 @@ import {
   TextInput,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import SearchableDropdown from 'react-native-searchable-dropdown';
+// import SearchableDropdown from 'react-native-searchable-dropdown';
+import Checkbox from 'expo-checkbox';
 
 const CarProfile = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isChecked, setChecked] = useState(false);
+  const [selectedValues, setSelectedValues] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -70,7 +73,7 @@ const CarProfile = () => {
       <View style={styles.content}>
         <Text>Create Car Profile</Text>
         <View style={styles.button}>
-          <Button title="Customize" onPress={toggleModal} />
+          <Text onPress={toggleModal}>Cannot Find my car.</Text>
           <Modal isVisible={isModalVisible}>
             <View style={styles.popup}>
               <Text>Add Car Information</Text>
@@ -83,7 +86,13 @@ const CarProfile = () => {
               <TextInput placeholder="Model" />
               <TextInput placeholder="Displacement" />
               <TextInput placeholder="Year" />
-              <TextInput placeholder="Is Supercharged" />
+              <Checkbox
+                // style={styles.checkbox}
+                value={isChecked}
+                onValueChange={setChecked}
+                color={isChecked ? '#4630EB' : undefined}
+              />
+              <Text>Is Supercharged?</Text>
               <TextInput placeholder="Drag" />
               <TextInput placeholder="Image url" />
               <Button title="Create" />
@@ -91,45 +100,14 @@ const CarProfile = () => {
             </View>
           </Modal>
         </View>
-        <SearchableDropdown
-          onItemSelect={(item) => {
-            const items = this.state.selectedItems;
-            items.push(item)
-            this.setState({ selectedItems: items });
-          }}
-          containerStyle={{ padding: 5 }}
-          onRemoveItem={(item, index) => {
-            const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
-            this.setState({ selectedItems: items });
-          }}
-          itemStyle={{
-            padding: 10,
-            marginTop: 2,
-            backgroundColor: '#ddd',
-            borderColor: '#bbb',
-            borderWidth: 1,
-            borderRadius: 5,
-          }}
-          itemTextStyle={{ color: '#222' }}
-          itemsContainerStyle={{ maxHeight: 140 }}
-          items={items}
-          defaultIndex={2}
-          resetValue={false}
-          textInputProps={{
-            placeholder: 'placeholder',
-            underlineColorAndroid: 'transparent',
-            style: {
-              padding: 12,
-              borderWidth: 1,
-              borderColor: '#ccc',
-              borderRadius: 5,
-            },
-            onTextChange: (text) => alert(text),
-          }}
-          listProps={{
-            nestedScrollEnabled: true,
-          }}
-        />
+        {/* <SearchableDropdown
+          options={items}
+          selectedValues={selectedValues}
+          setSelectedValues={setSelectedValues}
+          label="test dropdown"
+          placeholder="Test placeholder"
+          inputSize={300}
+        /> */}
       </View>
     </View>
   );
@@ -188,12 +166,10 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    height: 40,
-    width: 120,
+    fontSize: 16,
+    color: '#6536F9',
     left: 136,
     top: 700,
-    borderRadius: 2,
-    backgroundColor: '#AAAAAA',
   },
 });
 

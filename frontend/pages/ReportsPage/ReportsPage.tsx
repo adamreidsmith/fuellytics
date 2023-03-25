@@ -7,19 +7,36 @@ import {
   Image,
   Button,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const ReportsPage = () => {
   const { navigate } = useNavigation();
-  const [selectedRange, setRange] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const [startdate, setstartDate] = useState(new Date(1598051730000));
+  const [stopdate, setstopDate] = useState(new Date(1598051730000));
+  const [show, setShow] = useState(true);
+
+  const onChangeStart = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(true);
+    setstartDate(currentDate);
+  };
+
+  const onChangeStop = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(true);
+    setstopDate(currentDate);
   };
 
   return (
@@ -34,8 +51,27 @@ const ReportsPage = () => {
           />
           <Modal isVisible={isModalVisible}>
             <View style={styles.popup}>
-              <Text>Hey</Text>
-              <Button title="Hide modal" onPress={toggleModal} />
+              <Text> Select Date Range</Text>
+              <Text>Start Date: </Text>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={startdate}
+                  mode="date"
+                  onChange={onChangeStart}
+                />
+              )}
+              <Text>Stop Date: </Text>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={stopdate}
+                  mode="date"
+                  onChange={onChangeStop}
+                />
+              )}
+              <Button title="Apply" />
+              <Button title="Cancel" onPress={toggleModal} />
             </View>
           </Modal>
         </TouchableOpacity>
