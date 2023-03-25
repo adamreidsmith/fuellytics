@@ -11,6 +11,7 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
+import Header from 'components/Header';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
@@ -78,16 +79,7 @@ const MapPage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logos/car-logo-removebg-preview.png')}
-        />
-        <Image
-          style={styles.logoname}
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
-        />
-      </View>
+      <Header />
       <MapView
         style={styles.map}
         initialRegion={{
