@@ -15,11 +15,14 @@ import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
+import { io } from 'socket.io-client';
 import { metrics } from './constants';
 import { MetricType } from './types';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
+
+const socket = io('http://localhost:4000');
 
 const MapPage = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -176,6 +179,7 @@ const MapPage = () => {
             </>
           ) : (
             <View style={styles.detailsTitleContainer}>
+              <Text>Select a car to start</Text>
               <Button
                 title="Start recording"
                 onPress={() => onStartRecording()}
