@@ -1,69 +1,61 @@
-import { Text, View, StyleSheet, Image, Button } from 'react-native';
+import { Text, View, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from 'context/AuthContext';
 import { useCSRFToken } from 'services/authentication';
-import RNPickerSelect from 'react-native-picker-select';
 import { useState } from 'react';
-import { useCars } from 'services/cars';
+import { FlashList } from '@shopify/flash-list';
+import Button from 'components/Button';
+import { useCarProfiles } from 'services/carProfile';
+import Header from 'components/Header';
+import TextLink from 'components/TextLink';
 
 const HomePage = () => {
+  useCSRFToken();
   const { navigate } = useNavigation();
 
   const { logout, user } = useAuthContext();
   const [carModel, setCarModel] = useState(undefined);
-
-  useCSRFToken();
-
-  const { cars } = useCars();
-  // const items = [
-  //   { label: 'Football', value: 'football' },
-  //   { label: 'Baseball', value: 'baseball' },
-  //   { label: 'Hockey', value: 'hockey' },
-  // ];
-
-  const items = [];
+  const { carsProfiles, fetchNextPage, hasNextPage } = useCarProfiles({
+    userId: user?.id,
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logos/car-logo-removebg-preview.png')}
-        />
-        <Image
-          style={styles.logoname}
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
-        />
-      </View>
-      <View style={styles.content}>
-        <Image
-          style={styles.userpic}
-          source={require('../../assets/icons/user.png')}
-        />
+      <Header />
+      <View style={styles.bodyContainer}>
+        <View style={styles.logout}>
+          <TextLink title="Logout" onPress={() => logout()} />
+        </View>
+        <View style={styles.userPictureContainer}>
+          <Image
+            style={styles.userPicture}
+            source={require('./assets/user.png')}
+          />
+        </View>
         <Text style={styles.username}>Hello, {user?.username}</Text>
-        <Text style={styles.contentheader}>Car Profile</Text>
+        <Text style={styles.contentheader}>My car list:</Text>
         <View style={styles.line} />
-        <View style={styles.cardetails}>
-          {items.length === 0 ? (
-            <View>
-              <Text>No car registered.</Text>
-              <Button
-                title="Add Car"
-                onPress={() => {
-                  navigate('CarProfilePage' as never, {} as never);
-                }}
-              />
+        <View style={styles.carList}>
+          {carsProfiles.length === 0 ? (
+            <View style={styles.emptyCase}>
+              <Text style={styles.contentheader}>No car registered.</Text>
             </View>
           ) : (
-            <RNPickerSelect
-              value={carModel}
-              onValueChange={(value: any) => setCarModel(value)}
-              items={items}
-            />
+            <View>
+              <FlashList
+                data={carsProfiles}
+                renderItem={({ item }) => <View>{item.car.model}</View>}
+                onEndReached={fetchNextPage}
+                estimatedItemSize={100}
+              />
+              {carsProfiles.map((car) => (
+                <View key={car.id}>{car.car.model}</View>
+              ))}
+            </View>
           )}
         </View>
         <View style={styles.button}>
-          <Button title="Logout" onPress={() => logout()} />
+          <Button title="Add new car" onPress={() => {}} />
         </View>
       </View>
     </View>
@@ -73,8 +65,16 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+  },
+  logout: {
+    position: 'absolute',
+    top: 24,
+    left: 24,
+    zIndex: 99999,
+  },
+  bodyContainer: {
+    padding: 24,
+    position: 'relative',
   },
   input: {
     borderWidth: 1,
@@ -106,82 +106,53 @@ const styles = StyleSheet.create({
   error: {
     color: '#FF0000',
   },
-  header: {
-    position: 'absolute',
-    width: 390,
-    height: 152,
-    left: 0,
-    top: 0,
-    backgroundColor: '#AAAAAA',
+  profileContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
-  logo: {
-    position: 'absolute',
-    width: 70,
-    height: 60,
-    left: 26,
-    top: 66,
+  userPictureContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
-  logoname: {
-    position: 'absolute',
-    width: 250,
-    height: 40,
-    left: 126,
-    top: 76,
-  },
-  content: {
-    position: 'relative',
-  },
-  userpic: {
-    position: 'absolute',
-    height: 180,
-    width: 180,
-    left: 105,
-    top: 170,
+  userPicture: {
+    height: 80,
+    width: 80,
     borderRadius: 0,
   },
   username: {
-    position: 'absolute',
-    width: 278,
-    height: 37,
-    left: 57,
-    top: 360,
+    marginTop: 16,
+    marginBottom: 16,
     fontSize: 35,
     textAlign: 'center',
     color: '#000000',
   },
   contentheader: {
-    position: 'absolute',
-    width: 99,
-    height: 20,
-    left: 25,
-    top: 430,
     fontSize: 20,
     color: '#000000',
+    marginBottom: 6,
   },
   line: {
-    position: 'absolute',
-    width: 335,
-    height: 0,
-    left: 25,
-    top: 460,
     borderWidth: 1,
     borderColor: '#000000',
     borderStyle: 'solid',
+    marginBottom: 16,
   },
-  cardetails: {
-    position: 'absolute',
-    height: 200,
-    width: 335,
-    left: 25,
-    top: 470,
+  carList: {
     backgroundColor: '#d3d3d3',
+    height: '50%',
+    marginBottom: 16,
+  },
+  emptyCase: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
   button: {
-    position: 'absolute',
-    height: 40,
-    width: 120,
-    left: 136,
-    top: 700,
     borderRadius: 2,
     backgroundColor: '#AAAAAA',
   },
