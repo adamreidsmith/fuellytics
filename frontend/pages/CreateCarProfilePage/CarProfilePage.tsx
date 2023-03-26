@@ -51,9 +51,9 @@ const CarProfile = () => {
             <Text>Selected item: {JSON.stringify(selectedItem)}</Text>
           )}
         </View>
-        <View style={styles.imgarea}>
+        {/* <View style={styles.detail}>
           <Text>This is image</Text>
-        </View>
+        </View> */}
         <View style={styles.button}>
           <Text onPress={toggleModal}>Cannot Find my car.</Text>
           <Modal isVisible={isModalVisible}>
@@ -68,16 +68,18 @@ const CarProfile = () => {
               <TextInput style={styles.input} placeholder="Model" />
               <TextInput style={styles.input} placeholder="Displacement" />
               <TextInput style={styles.input} placeholder="Year" />
-              <Checkbox
-                // style={styles.checkbox}
-                value={isChecked}
-                onValueChange={setChecked}
-                color={isChecked ? '#4630EB' : undefined}
-              />
-              <Text>Is Supercharged?</Text>
+              <View style={styles.rowContainer}>
+                <Checkbox
+                  // style={styles.checkbox}
+                  value={isChecked}
+                  onValueChange={setChecked}
+                  color={isChecked ? '#434343' : undefined}
+                />
+                <Text> Is Supercharged?</Text>
+              </View>
               <TextInput style={styles.input} placeholder="Drag" />
               <TextInput style={styles.input} placeholder="Image url" />
-              <View style={styles.buttonContainer}>
+              <View style={styles.rowContainer}>
                 <Button title="Create" />
                 <Button title="Cancle" onPress={toggleModal} />
               </View>
@@ -207,9 +209,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     width: '80%',
   },
-  buttonContainer: {
+  rowContainer: {
     position: 'relative',
     justifyContent: 'space-around',
+    flexDirection: 'row',
   },
 });
 
