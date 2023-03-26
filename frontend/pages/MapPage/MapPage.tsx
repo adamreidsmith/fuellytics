@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,6 +17,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
 import { io } from 'socket.io-client';
+import { LineChart, Grid, YAxis } from 'react-native-svg-charts';
 import { metrics } from './constants';
 import { MetricType } from './types';
 
@@ -32,7 +33,7 @@ const LONGITUDE = -114.066666;
 const MapPage = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [openCollapsible, setOpenCollapsible] =
-    useState<MetricType>('ch4Emissions');
+    useState<MetricType>('co2Emissions');
   const { navigate } = useNavigation();
   const { mutateAsync: createTrip } = useCreateTrip();
   const [isConnected, setIsConnected] = useState(false);
@@ -121,6 +122,17 @@ const MapPage = () => {
     () => ['10%', hasStartedRecording ? '75%' : '13%'],
     [hasStartedRecording],
   );
+  const data = [
+    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
+    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
+    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
+    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
+    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 0, 10, 40, 95, -4, -24,
+    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
+    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
+    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
+  ];
+  const contentInset = { top: 20, bottom: 20 };
 
   return (
     <View>
@@ -166,7 +178,28 @@ const MapPage = () => {
                       </Text>
                     </TouchableOpacity>
                     <Collapsible collapsed={openCollapsible !== metric.value}>
-                      <Text>fuelConsumption</Text>
+                      <View style={{ height: 150, flexDirection: 'row' }}>
+                        <YAxis
+                          data={data}
+                          contentInset={contentInset}
+                          svg={{
+                            fill: 'grey',
+                            fontSize: 10,
+                          }}
+                          numberOfTicks={10}
+                          formatLabel={(value) => `${value}L`}
+                        />
+                        <LineChart
+                          style={{ flex: 1, marginLeft: 16 }}
+                          data={data}
+                          svg={{ stroke: 'rgb(134, 65, 244)' }}
+                          contentInset={contentInset}
+                          animate
+                          animationDuration={300}
+                        >
+                          <Grid />
+                        </LineChart>
+                      </View>
                     </Collapsible>
                   </View>
                 ))}
