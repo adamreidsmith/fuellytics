@@ -73,6 +73,7 @@
     "@types/node": "^18.11.9",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
+    "@types/react-native-svg-charts": "^5.0.12",
     "@types/react-native-vector-icons": "^6.4.13",
     "@types/set-cookie-parser": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.52.0",

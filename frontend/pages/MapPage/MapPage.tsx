@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,7 +13,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { WEBSOCKET_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from '@env';
+import { WEBSOCKET_URL } from '@env';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Collapsible from 'react-native-collapsible';
@@ -24,30 +30,42 @@ import { MetricType } from './types';
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
-// const socket = io(WEBSOCKET_URL, {
-//   transports: ['websocket'],
-//   upgrade: false,
-//   reconnection: true,
-// });
-
 const MapPage = () => {
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [openCollapsible, setOpenCollapsible] =
     useState<MetricType>('co2Emissions');
   const { navigate } = useNavigation();
   const { mutateAsync: createTrip } = useCreateTrip();
   const [isConnected, setIsConnected] = useState(false);
+  const [response, setResponse] = useState<any>(undefined);
 
-  // useEffect(() => {
-  //   socket.on('connect', () => {
-  //     console.log('connect');
-  //     setIsConnected(socket.connected);
-  //   });
+  useEffect(() => {
+    const newSocket = new WebSocket(WEBSOCKET_URL);
 
-  //   socket.on('disconnect', () => {
-  //     setIsConnected(socket.connected);
-  //   });
-  // }, []);
+    newSocket.onopen = () => {
+      setSocket(newSocket);
+      setIsConnected(true);
+    };
+
+    newSocket.onmessage = (event) => {
+      setResponse(event.data);
+    };
+
+    newSocket.onerror = (error) => {
+      // eslint-disable-next-line no-console
+      console.error('WebSocket error:', error);
+    };
+
+    newSocket.onclose = () => {
+      setSocket(null);
+      setIsConnected(false);
+    };
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
@@ -119,7 +137,7 @@ const MapPage = () => {
   };
 
   const snapPoints = useMemo(
-    () => ['10%', hasStartedRecording ? '75%' : '13%'],
+    () => ['10%', hasStartedRecording ? '75%' : '50%'],
     [hasStartedRecording],
   );
   const data = [
@@ -233,6 +251,23 @@ const MapPage = () => {
               <Button
                 title="Start recording"
                 onPress={() => onStartRecording()}
+              />
+              <Text>Response: {JSON.stringify(response)}</Text>
+              <Button
+                title="Send event"
+                variant="secondary"
+                onPress={() => {
+                  const payload = {
+                    requestContext: {
+                      routeKey: '$default',
+                    },
+                    body: {
+                      hi: 'testing 123',
+                    },
+                  };
+
+                  socket?.send(JSON.stringify(payload));
+                }}
               />
             </View>
           )}
