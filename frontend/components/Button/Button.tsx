@@ -2,7 +2,12 @@ import React, { FC } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ButtonProps } from './types';
 
-const Button: FC<ButtonProps> = ({ title, onPress, variant = 'primary' }) => (
+const Button: FC<ButtonProps> = ({
+  title,
+  onPress,
+  variant = 'primary',
+  disabled,
+}) => (
   <TouchableOpacity
     style={
       {
@@ -13,6 +18,7 @@ const Button: FC<ButtonProps> = ({ title, onPress, variant = 'primary' }) => (
       }[variant]
     }
     onPress={onPress}
+    disabled={disabled}
   >
     <Text
       style={

@@ -1,7 +1,6 @@
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
-import IMUPage from './pages/IMUPage';
 import MapPage from './pages/MapPage';
 import ReportsPage from './pages/ReportsPage';
 import SummaryPage from './pages/SummaryPage';
@@ -29,10 +28,6 @@ export const navigatorPages = [
     page: MapPage,
     name: 'MapPage',
   },
-  // {
-  //   page: IMUPage,
-  //   name: 'IMUPage',
-  // },
   {
     page: ReportsPage,
     name: 'ReportsPage',

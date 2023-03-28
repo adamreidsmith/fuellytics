@@ -5,9 +5,15 @@ import {
   UseMutationOptions,
 } from 'react-query';
 import { z } from 'zod';
-import { TripResponseSchema, TripSchemaPayload } from './schema';
+import {
+  PaginatedTripResponseSchema,
+  TripSchemaPayload,
+  TripSchema,
+} from './schema';
 
-export type TripResponse = z.infer<typeof TripResponseSchema>;
+export type TripResponse = z.infer<typeof PaginatedTripResponseSchema>;
+
+export type CreateTripResponse = z.infer<typeof TripSchema>;
 
 export interface TripsVariables
   extends Omit<
@@ -28,7 +34,7 @@ export type CreateTripPayload = z.infer<typeof TripSchemaPayload>;
 export interface CreateTripVariables
   extends Omit<
     UseMutationOptions<
-      TripResponse | undefined,
+      CreateTripResponse,
       AxiosError,
       CreateTripPayload,
       unknown

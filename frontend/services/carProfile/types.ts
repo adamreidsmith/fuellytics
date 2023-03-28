@@ -25,6 +25,7 @@ export interface CarProfileVariables
     'queryKey' | 'queryFn' | 'getNextPageParam' | 'getPreviousPageParam'
   > {
   userId?: number;
+  search?: string;
 }
 
 export type CreateCarProfileResponse = z.infer<typeof CreateCarProfileSchema>;

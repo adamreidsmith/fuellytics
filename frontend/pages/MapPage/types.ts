@@ -10,3 +10,19 @@ export type MetricOption = {
   label: string;
   value: MetricType;
 };
+
+export type FormattedCarProfile = {
+  title: string;
+  id: string;
+  imageUrl: string | null;
+  car: {
+    id: number;
+    make: string;
+    model: string;
+    displacement: number;
+    year: number;
+    isSupercharged: boolean;
+    drag: number;
+    imageUrl: string | null;
+  };
+};

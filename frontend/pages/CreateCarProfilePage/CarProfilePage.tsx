@@ -14,6 +14,7 @@ import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import { useCars } from 'services/cars';
 import Header from 'components/Header';
 import Button from 'components/Button';
+import useDebounce from 'hooks/useDebounce';
 import { FormattedCar } from './types';
 
 const CarProfile = () => {
@@ -22,12 +23,14 @@ const CarProfile = () => {
   const [isChecked, setChecked] = useState(false);
   const [searchKey, setSearchKey] = useState('');
 
+  const debouncedKey = useDebounce(searchKey);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
   const [carModel, setCarModel] = useState(undefined);
   const [selectedItem, setSelectedItem] = useState<FormattedCar | null>(null);
-  const { cars } = useCars({ search: searchKey });
+  const { cars } = useCars({ search: debouncedKey });
 
   return (
     <View style={styles.container}>
@@ -85,7 +88,7 @@ const CarProfile = () => {
               </View>
             </View>
           </Modal>
-        </View> */}
+        </View>
         <View style={styles.submitButton}>
           <Button
             title="Create"

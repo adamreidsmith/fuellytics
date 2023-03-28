@@ -12,7 +12,7 @@ export const TripSchema = z.object({
   ch4Emissions: z.number(),
 });
 
-export const TripResponseSchema = z.object({
+export const PaginatedTripResponseSchema = z.object({
   count: z.number(),
   next: z.string().nullable(),
   previous: z.string().nullable(),

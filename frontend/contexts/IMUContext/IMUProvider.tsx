@@ -7,20 +7,27 @@ import React, {
 } from 'react';
 import { Accelerometer, DeviceMotion } from 'expo-sensors';
 import { Subscription } from 'expo-sensors/build/Pedometer';
+import { frequency } from '../contants';
 import { IMUContext } from './IMUContext';
 import { IMUContextType } from './types';
 
 export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [acceletometerWithGravity, setData] = useState({
+  const [enabled, setEnabled] = useState(false);
+  const [acceletometerWithGravity, setAccelerationWithGravity] = useState({
     x: 0,
     y: 0,
     z: 0,
   });
-  const [accelerometer, setSetAcceleration] = useState<{
-    x: number;
-    y: number;
-    z: number;
-  } | null>(null);
+  const [accelerometerWithoutGravity, setAccelerationWithoutGravity] =
+    useState<{
+      x: number;
+      y: number;
+      z: number;
+    }>({
+      x: 0,
+      y: 0,
+      z: 0,
+    });
   const [gyroscope, setRotation] = useState({
     alpha: 0,
     beta: 0,
@@ -38,26 +45,33 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
 
       if (!isAvailable) return;
 
+      DeviceMotion.setUpdateInterval(frequency);
       DeviceMotion.addListener(({ rotation, acceleration }) => {
         setRotation(rotation);
-        setSetAcceleration(acceleration);
+        if (acceleration) {
+          setAccelerationWithoutGravity(acceleration);
+        }
       });
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
   };
 
   useEffect(() => {
-    isDeviceMotionReady();
+    if (enabled) {
+      isDeviceMotionReady();
 
-    return () => {
-      DeviceMotion.removeAllListeners();
-    };
-  }, []);
+      return () => {
+        DeviceMotion.removeAllListeners();
+      };
+    }
+    return () => {};
+  }, [enabled]);
 
   const _subscribe = () => {
-    Accelerometer.setUpdateInterval(750);
-    setSubscription(Accelerometer.addListener(setData));
+    Accelerometer.setUpdateInterval(frequency);
+    setSubscription(Accelerometer.addListener(setAccelerationWithGravity));
   };
 
   const _unsubscribe = () => {
@@ -68,17 +82,24 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
+    if (enabled) {
+      _subscribe();
+
+      return () => _unsubscribe();
+    }
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
 
   const value: IMUContextType = useMemo(
     () => ({
-      accelerometer,
+      accelerometerWithoutGravity,
       gyroscope,
       acceletometerWithGravity,
+      setEnabled,
+      enabled,
     }),
-    [accelerometer, acceletometerWithGravity, gyroscope],
+    [accelerometerWithoutGravity, acceletometerWithGravity, enabled, gyroscope],
   );
 
   return <IMUContext.Provider value={value}>{children}</IMUContext.Provider>;

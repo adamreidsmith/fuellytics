@@ -26,8 +26,6 @@ function PrivateTabs() {
             iconName = focused ? 'ios-home' : 'ios-home-outline';
           } else if (route.name === 'MapPage') {
             iconName = focused ? 'ios-navigate' : 'ios-navigate-outline';
-          } else if (route.name === 'IMUPage') {
-            iconName = focused ? 'ios-basket' : 'ios-basket-outline';
           } else if (route.name === 'ReportsPage') {
             iconName = focused ? 'ios-document' : 'ios-document-outline';
           } else if (route.name === 'SummaryPage') {

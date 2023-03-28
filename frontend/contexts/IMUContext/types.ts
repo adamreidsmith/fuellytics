@@ -1,5 +1,5 @@
 export type IMUContextType = {
-  accelerometer: {
+  accelerometerWithoutGravity: {
     x: number;
     y: number;
     z: number;
@@ -14,4 +14,6 @@ export type IMUContextType = {
     y: number;
     z: number;
   };
+  setEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  enabled: boolean;
 };

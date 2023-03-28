@@ -15,30 +15,97 @@ import {
 } from 'react-native';
 import { WEBSOCKET_URL } from '@env';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import * as Location from 'expo-location';
 import Collapsible from 'react-native-collapsible';
-import { LocationObjectCoords } from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
-import { io } from 'socket.io-client';
 import { LineChart, Grid, YAxis } from 'react-native-svg-charts';
+import { IMUProvider, useIMUContext } from 'contexts/IMUContext';
+import { GPSProvider, useGPSContext } from 'contexts/GPSContext';
+import { useCarProfiles } from 'services/carProfile';
+import { useAuthContext } from 'context/AuthContext';
+import useDebounce from 'hooks/useDebounce';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import { metrics } from './constants';
-import { MetricType } from './types';
+import { FormattedCarProfile, MetricType } from './types';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
 const MapPage = () => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const { user } = useAuthContext();
+  const {
+    accelerometerWithoutGravity,
+    acceletometerWithGravity,
+    gyroscope,
+    setEnabled,
+    enabled,
+  } = useIMUContext();
+  const {
+    location,
+    hasStartedRecording,
+    subscribeToLocationUpdates,
+    unsubscribeFromLocationUpdates,
+    requestLocationPermission,
+    routeCoordinates,
+  } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
   const [openCollapsible, setOpenCollapsible] =
     useState<MetricType>('co2Emissions');
   const { navigate } = useNavigation();
-  const { mutateAsync: createTrip } = useCreateTrip();
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const { mutateAsync: createTrip } = useCreateTrip({
+    onSuccess: (response) => {
+      navigate('SummaryPage' as never, {} as never);
+    },
+  });
   const [isConnected, setIsConnected] = useState(false);
-  const [response, setResponse] = useState<any>(undefined);
+  const [searchKey, setSearchKey] = useState('');
+  const debouncedKey = useDebounce(searchKey);
+  const [selectedCar, setSelectedCar] = useState<FormattedCarProfile | null>(
+    null,
+  );
+
+  const { formattedCarsProfiles } = useCarProfiles({
+    userId: user?.id,
+    search: debouncedKey,
+  });
+
+  useEffect(() => {
+    if (enabled && isRecording && isConnected && selectedCar && socket) {
+      const payload = {
+        isSupercharged: selectedCar?.car.isSupercharged,
+        displacement: selectedCar?.car.displacement,
+        drag: selectedCar?.car.id,
+        accelerometerWithoutGravity,
+        acceletometerWithGravity,
+        gyroscope,
+      };
+
+      socket.send(JSON.stringify(payload));
+    }
+  }, [
+    accelerometerWithoutGravity,
+    acceletometerWithGravity,
+    enabled,
+    gyroscope,
+    isConnected,
+    isRecording,
+    selectedCar,
+    socket,
+  ]);
+
+  useEffect(() => {
+    if (isConnected && hasStartedRecording) {
+      setEnabled(true);
+    } else {
+      setEnabled(false);
+    }
+  }, [hasStartedRecording, isConnected, setEnabled]);
 
   useEffect(() => {
     const newSocket = new WebSocket(WEBSOCKET_URL);
@@ -49,7 +116,7 @@ const MapPage = () => {
     };
 
     newSocket.onmessage = (event) => {
-      setResponse(event.data);
+      console.log(JSON.parse(event.data));
     };
 
     newSocket.onerror = (error) => {
@@ -67,57 +134,14 @@ const MapPage = () => {
     };
   }, []);
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null,
-  );
-  const [isRecording, setIsRecording] = useState(false);
-  const [routeCoordinates, setRouteCoordinates] = useState<
-    LocationObjectCoords[]
-  >([]);
-  const hasStartedRecording = routeCoordinates.length > 0;
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [locationSubscription, setLocationSubscription] =
-    useState<Location.LocationSubscription | null>(null);
+  const onStartRecording = async () => {
+    const response = await requestLocationPermission();
 
-  const requestLocationPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== 'granted') {
-      setErrorMessage('Permission to access location was denied');
+    if (response === 'granted') {
+      await subscribeToLocationUpdates();
+      setIsRecording(true);
+      setStartTime(new Date());
     }
-
-    return status;
-  };
-
-  const subscribeToLocationUpdates = async () => {
-    const subscription = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 1000,
-        distanceInterval: 1,
-      },
-      onLocationUpdate,
-    );
-
-    setLocationSubscription(subscription);
-  };
-
-  const unsubscribeFromLocationUpdates = () => {
-    if (locationSubscription) {
-      locationSubscription.remove();
-      setLocationSubscription(null);
-    }
-  };
-
-  const onLocationUpdate: Location.LocationCallback = (location) => {
-    setLocation(location);
-    setRouteCoordinates((state) => [...state, location.coords]);
-  };
-
-  const onStartRecording = () => {
-    requestLocationPermission();
-    subscribeToLocationUpdates();
-    setIsRecording(true);
   };
 
   const onPauseRecording = () => {
@@ -131,13 +155,13 @@ const MapPage = () => {
     // SEND POST REQUEST, and on success navigate()
   };
 
-  const onContinueRecording = () => {
-    subscribeToLocationUpdates();
+  const onContinueRecording = async () => {
+    await subscribeToLocationUpdates();
     setIsRecording(true);
   };
 
   const snapPoints = useMemo(
-    () => ['10%', hasStartedRecording ? '75%' : '50%'],
+    () => ['10%', hasStartedRecording ? '70%' : '30%'],
     [hasStartedRecording],
   );
   const data = [
@@ -157,7 +181,7 @@ const MapPage = () => {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          initialRegion={{
+          region={{
             latitude: location?.coords.latitude || LATITUDE,
             longitude: location?.coords.longitude || LONGITUDE,
             latitudeDelta: 0.0922,
@@ -247,28 +271,49 @@ const MapPage = () => {
             </>
           ) : (
             <View style={styles.detailsTitleContainer}>
-              <Text>Select a car to start: {JSON.stringify(isConnected)}</Text>
-              <Button
-                title="Start recording"
-                onPress={() => onStartRecording()}
-              />
-              <Text>Response: {JSON.stringify(response)}</Text>
-              <Button
-                title="Send event"
-                variant="secondary"
-                onPress={() => {
-                  const payload = {
-                    requestContext: {
-                      routeKey: '$default',
-                    },
-                    body: {
-                      hi: 'testing 123',
-                    },
-                  };
-
-                  socket?.send(JSON.stringify(payload));
+              <AutocompleteDropdown
+                clearOnFocus={false}
+                closeOnSubmit={false}
+                textInputProps={{
+                  placeholder: 'Select a car before recording',
                 }}
+                // @ts-ignore
+                onSelectItem={setSelectedCar}
+                dataSet={formattedCarsProfiles}
+                onChangeText={(value) => setSearchKey(value)}
+                onBlur={() => setSearchKey('')}
               />
+              {socket ? (
+                <>
+                  <View style={styles.actionButtons}>
+                    <Button
+                      title="Start recording"
+                      onPress={() => onStartRecording()}
+                      disabled={!selectedCar}
+                    />
+                  </View>
+                  <View style={styles.actionButtons}>
+                    <Button
+                      title="Send event"
+                      variant="secondary"
+                      onPress={() => {
+                        const payload = {
+                          isSupercharged: selectedCar?.car.isSupercharged,
+                          displacement: selectedCar?.car.displacement,
+                          drag: selectedCar?.car.id,
+                          accelerometerWithoutGravity,
+                          acceletometerWithGravity,
+                          gyroscope,
+                        };
+
+                        socket?.send(JSON.stringify(payload));
+                      }}
+                    />
+                  </View>
+                </>
+              ) : (
+                <Text>Connecting...</Text>
+              )}
             </View>
           )}
         </BottomSheet>
@@ -277,11 +322,22 @@ const MapPage = () => {
   );
 };
 
-export default MapPage;
+const App = () => (
+  <GPSProvider>
+    <IMUProvider>
+      <MapPage />
+    </IMUProvider>
+  </GPSProvider>
+);
+
+export default App;
 
 const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'center',
+  },
+  actionButtons: {
+    marginTop: 12,
   },
   container: {
     position: 'relative',

@@ -1,7 +1,7 @@
 import { MutationFunction, QueryFunction, QueryKey } from 'react-query';
 import API from 'services/api';
-import { TripResponseSchema } from './schema';
-import { CreateTripPayload, TripResponse } from './types';
+import { PaginatedTripResponseSchema, TripSchema } from './schema';
+import { CreateTripPayload, CreateTripResponse, TripResponse } from './types';
 
 export const getTrips: QueryFunction<TripResponse, QueryKey> = async ({
   queryKey,
@@ -11,11 +11,13 @@ export const getTrips: QueryFunction<TripResponse, QueryKey> = async ({
 
   return API.get('api/trips/', {
     params: { ...variables, page: pageParam },
-  }).then(async (result) => TripResponseSchema.parse(result.data));
+  }).then(async (result) => PaginatedTripResponseSchema.parse(result.data));
 };
 
 export const createTrip: MutationFunction<
-  TripResponse,
+  CreateTripResponse,
   CreateTripPayload
 > = async (payload) =>
-  API.post('api/trips/', payload).then((result) => result.data);
+  API.post('api/trips/', payload).then((result) =>
+    TripSchema.parse(result.data),
+  );

@@ -10,11 +10,12 @@ import {
 
 export const useCarProfiles = ({
   userId,
+  search,
   ...opts
 }: CarProfileVariables = {}) => {
   const { data, status, refetch, fetchNextPage, hasNextPage } =
     useInfiniteQuery<CarProfileReponse, AxiosError>(
-      ['getCarProfiles', { userId }],
+      ['getCarProfiles', { userId, search }],
       getCarProfiles,
       {
         getNextPageParam: (lastPage) => lastPage?.next ?? undefined,
@@ -24,8 +25,20 @@ export const useCarProfiles = ({
     );
 
   const carsProfiles = data?.pages.flatMap((el) => el.results) || [];
+  const formattedCarsProfiles = carsProfiles.map((el) => ({
+    ...el,
+    title: `${el.car.make} ${el.car.model}`,
+    id: el.id.toString(),
+  }));
 
-  return { carsProfiles, status, refetch, fetchNextPage, hasNextPage };
+  return {
+    carsProfiles,
+    formattedCarsProfiles,
+    status,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  };
 };
 
 export const useCreateCarProfile = ({
