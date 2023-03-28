@@ -65,7 +65,8 @@
     "set-cookie-parser": "^2.6.0",
     "socket.io": "^4.6.0",
     "socket.io-client": "^4.6.1",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "expo-updates": "~0.15.6"
   },
   "devDependencies": {
     "@expo/webpack-config": "^18.0.1",

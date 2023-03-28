@@ -5,10 +5,10 @@
     "description": "ENGO 651 app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/fuellytics-logo.jpg",
+    "icon": "./assets/icons/fuellytics-logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icons/fuellytics-logo.jpg",
+      "image": "./assets/icons/fuellytics-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/fuellytics-logo.jpg",
+        "foregroundImage": "./assets/icons/fuellytics-logo.png",
         "backgroundColor": "#FFFFFF"
       }
     },
