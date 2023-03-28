@@ -77,15 +77,15 @@ const Navigator = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <AuthProvider>
           <Navigator />
         </AuthProvider>
       </NavigationContainer>
-    </GestureHandlerRootView>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </GestureHandlerRootView>
 );
 
 export default App;

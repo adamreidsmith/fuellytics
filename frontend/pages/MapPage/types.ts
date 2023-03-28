@@ -4,7 +4,7 @@
 //   | 'n2oEmissions'
 //   | 'ch4Emissions';
 
-export type MetricType = 'fuelConsumption' | 'co2Emissions' | 'velocty';
+export type MetricType = 'fuel' | 'co2' | 'speed';
 
 export type MetricOption = {
   label: string;
@@ -25,4 +25,14 @@ export type FormattedCarProfile = {
     drag: number;
     imageUrl: string | null;
   };
+};
+
+export type GraphsData = {
+  fuel: number[];
+  speed: number[];
+  co2: number[];
+  co: number[];
+  nox: number[];
+  unburnedHydrocarbons: number[];
+  particulate: number[];
 };

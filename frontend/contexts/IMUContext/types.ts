@@ -14,6 +14,11 @@ export type IMUContextType = {
     y: number;
     z: number;
   };
+  magnetometer: {
+    x: number;
+    y: number;
+    z: number;
+  };
   setEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   enabled: boolean;
 };

@@ -28,7 +28,8 @@ import { useAuthContext } from 'context/AuthContext';
 import useDebounce from 'hooks/useDebounce';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import { metrics } from './constants';
-import { FormattedCarProfile, MetricType } from './types';
+import { FormattedCarProfile, GraphsData, MetricType } from './types';
+import { MessageSchema } from './schema';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
@@ -51,10 +52,18 @@ const MapPage = () => {
     routeCoordinates,
   } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const [graphsData, setGraphsData] = useState<GraphsData>({
+    fuel: [],
+    speed: [],
+    co2: [],
+    co: [],
+    nox: [],
+    unburnedHydrocarbons: [],
+    particulate: [],
+  });
 
   const [startTime, setStartTime] = useState<Date | undefined>(undefined);
-  const [openCollapsible, setOpenCollapsible] =
-    useState<MetricType>('co2Emissions');
+  const [openCollapsible, setOpenCollapsible] = useState<MetricType>('co2');
   const { navigate } = useNavigation();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -116,7 +125,23 @@ const MapPage = () => {
     };
 
     newSocket.onmessage = (event) => {
-      console.log(JSON.parse(event.data));
+      const message = MessageSchema.safeParse(JSON.parse(event.data));
+
+      if (message.success) {
+        setGraphsData((state) => ({
+          ...state,
+          fuel: [...state.fuel, message.data.fuel],
+          speed: [...state.speed, message.data.speed],
+          co2: [...state.co2, message.data.co2],
+          co: [...state.co, message.data.co],
+          nox: [...state.nox, message.data.nox],
+          unburnedHydrocarbons: [
+            ...state.unburnedHydrocarbons,
+            message.data.unburnedHydrocarbons,
+          ],
+          particulate: [...state.particulate, message.data.particulate],
+        }));
+      }
     };
 
     newSocket.onerror = (error) => {
@@ -164,16 +189,7 @@ const MapPage = () => {
     () => ['10%', hasStartedRecording ? '70%' : '30%'],
     [hasStartedRecording],
   );
-  const data = [
-    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
-    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
-    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
-    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
-    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 0, 10, 40, 95, -4, -24,
-    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
-    50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24,
-    85, 91, 35, 53, -53, 24, 50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24,
-  ];
+
   const contentInset = { top: 20, bottom: 20 };
 
   return (
@@ -222,18 +238,18 @@ const MapPage = () => {
                     <Collapsible collapsed={openCollapsible !== metric.value}>
                       <View style={{ height: 150, flexDirection: 'row' }}>
                         <YAxis
-                          data={data}
+                          data={graphsData[metric.value].slice(-20)}
                           contentInset={contentInset}
                           svg={{
                             fill: 'grey',
                             fontSize: 10,
                           }}
                           numberOfTicks={10}
-                          formatLabel={(value) => `${value}L`}
+                          formatLabel={(value) => `${value} L`}
                         />
                         <LineChart
                           style={{ flex: 1, marginLeft: 16 }}
-                          data={data}
+                          data={graphsData[metric.value].slice(-20)}
                           svg={{ stroke: 'rgb(134, 65, 244)' }}
                           contentInset={contentInset}
                           animate

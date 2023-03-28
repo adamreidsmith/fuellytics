@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Accelerometer, DeviceMotion } from 'expo-sensors';
+import { Accelerometer, DeviceMotion, Magnetometer } from 'expo-sensors';
 import { Subscription } from 'expo-sensors/build/Pedometer';
 import { frequency } from '../contants';
 import { IMUContext } from './IMUContext';
@@ -33,7 +33,15 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
     beta: 0,
     gamma: 0,
   });
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [magnetometer, setMagnetometer] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
+  const [magnetometerSubscription, setMagnetometerSubscription] =
+    useState<Subscription | null>(null);
+  const [accelerometerSubscription, setAccelerometerSubscription] =
+    useState<Subscription | null>(null);
 
   const isDeviceMotionReady = async () => {
     try {
@@ -46,8 +54,10 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
       if (!isAvailable) return;
 
       DeviceMotion.setUpdateInterval(frequency);
-      DeviceMotion.addListener(({ rotation, acceleration }) => {
-        setRotation(rotation);
+      DeviceMotion.addListener(({ rotationRate, acceleration }) => {
+        if (rotationRate) {
+          setRotation(rotationRate);
+        }
         if (acceleration) {
           setAccelerationWithoutGravity(acceleration);
         }
@@ -66,19 +76,29 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
         DeviceMotion.removeAllListeners();
       };
     }
-    return () => {};
+    return () => {
+      console.log('unmount');
+    };
   }, [enabled]);
 
   const _subscribe = () => {
     Accelerometer.setUpdateInterval(frequency);
-    setSubscription(Accelerometer.addListener(setAccelerationWithGravity));
+    setAccelerometerSubscription(
+      Accelerometer.addListener(setAccelerationWithGravity),
+    );
+    Magnetometer.setUpdateInterval(frequency);
+    setMagnetometerSubscription(Magnetometer.addListener(setMagnetometer));
   };
 
   const _unsubscribe = () => {
-    if (subscription) {
-      subscription.remove();
+    if (accelerometerSubscription) {
+      accelerometerSubscription.remove();
     }
-    setSubscription(null);
+    if (magnetometerSubscription) {
+      magnetometerSubscription.remove();
+    }
+    setMagnetometerSubscription(null);
+    setAccelerometerSubscription(null);
   };
 
   useEffect(() => {
@@ -87,7 +107,9 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
 
       return () => _unsubscribe();
     }
-    return () => {};
+    return () => {
+      console.log('unmount');
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
@@ -96,10 +118,17 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
       accelerometerWithoutGravity,
       gyroscope,
       acceletometerWithGravity,
+      magnetometer,
       setEnabled,
       enabled,
     }),
-    [accelerometerWithoutGravity, acceletometerWithGravity, enabled, gyroscope],
+    [
+      accelerometerWithoutGravity,
+      acceletometerWithGravity,
+      enabled,
+      gyroscope,
+      magnetometer,
+    ],
   );
 
   return <IMUContext.Provider value={value}>{children}</IMUContext.Provider>;
