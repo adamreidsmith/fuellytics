@@ -38,10 +38,11 @@ const MapPage = () => {
   const { user } = useAuthContext();
   const {
     accelerometerWithoutGravity,
-    acceletometerWithGravity,
+    accelerometerWithGravity,
     gyroscope,
     setEnabled,
     enabled,
+    magnetometer,
   } = useIMUContext();
   const {
     location,
@@ -62,7 +63,8 @@ const MapPage = () => {
     particulate: [],
   });
 
-  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+  const [startedAt, setStartedAt] = useState<Date | undefined>(undefined);
+  const [endedAt, setEndedAt] = useState<Date | undefined>(undefined);
   const [openCollapsible, setOpenCollapsible] = useState<MetricType>('co2');
   const { navigate } = useNavigation();
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -89,23 +91,28 @@ const MapPage = () => {
       const payload = {
         isSupercharged: selectedCar?.car.isSupercharged,
         displacement: selectedCar?.car.displacement,
-        drag: selectedCar?.car.id,
+        drag: selectedCar?.car.drag,
         accelerometerWithoutGravity,
-        acceletometerWithGravity,
+        accelerometerWithGravity,
         gyroscope,
+        magnetometer,
+        location,
+        time: new Date().getTime(),
       };
 
       socket.send(JSON.stringify(payload));
     }
   }, [
     accelerometerWithoutGravity,
-    acceletometerWithGravity,
+    accelerometerWithGravity,
     enabled,
     gyroscope,
     isConnected,
     isRecording,
     selectedCar,
     socket,
+    magnetometer,
+    location,
   ]);
 
   useEffect(() => {
@@ -165,18 +172,30 @@ const MapPage = () => {
     if (response === 'granted') {
       await subscribeToLocationUpdates();
       setIsRecording(true);
-      setStartTime(new Date());
+      setStartedAt(new Date());
     }
   };
 
   const onPauseRecording = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
+    setEndedAt(new Date());
   };
 
   const onEndRecording = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
+
+    if (selectedCar && startedAt && endedAt) {
+      // createTrip({
+      //   startedAt: startedAt.toISOString(),
+      //   endedAt: endedAt.toISOString(),
+      //   carId: selectedCar?.id,
+      //   routeCoordinates,
+      //   co2Emissions: 0,
+      // });
+    }
+
     // SEND POST REQUEST, and on success navigate()
   };
 
@@ -318,7 +337,7 @@ const MapPage = () => {
                           displacement: selectedCar?.car.displacement,
                           drag: selectedCar?.car.id,
                           accelerometerWithoutGravity,
-                          acceletometerWithGravity,
+                          accelerometerWithGravity,
                           gyroscope,
                         };
 

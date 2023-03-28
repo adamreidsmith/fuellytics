@@ -20,5 +20,5 @@ export const PaginatedTripResponseSchema = z.object({
 });
 
 export const TripSchemaPayload = TripSchema.extend({
-  carId: z.number(),
+  carId: z.string(),
 }).omit({ carProfile: true });

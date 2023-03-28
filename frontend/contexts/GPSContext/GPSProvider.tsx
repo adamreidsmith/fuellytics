@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import { FC, PropsWithChildren, useState } from 'react';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
 import { frequency } from '../contants';
@@ -17,7 +17,7 @@ export const GPSProvider: FC<PropsWithChildren> = ({ children }) => {
     useState<Location.LocationSubscription | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const requestLocationPermission = useCallback(async () => {
+  const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== 'granted') {
@@ -25,50 +25,42 @@ export const GPSProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     return status;
-  }, []);
+  };
 
   const onLocationUpdate: Location.LocationCallback = (location) => {
     setLocation(location);
     setRouteCoordinates((state) => [...state, location.coords]);
   };
 
-  const subscribeToLocationUpdates = useCallback(async () => {
+  const subscribeToLocationUpdates = async () => {
     const subscription = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: frequency,
+        distanceInterval: 1,
       },
       onLocationUpdate,
     );
 
     setLocationSubscription(subscription);
-  }, []);
+  };
 
-  const unsubscribeFromLocationUpdates = useCallback(() => {
+  const unsubscribeFromLocationUpdates = () => {
     if (locationSubscription) {
       locationSubscription.remove();
       setLocationSubscription(null);
     }
-  }, [locationSubscription]);
+  };
 
-  const value: GPSContextType = useMemo(
-    () => ({
-      hasStartedRecording,
-      subscribeToLocationUpdates,
-      unsubscribeFromLocationUpdates,
-      requestLocationPermission,
-      location,
-      routeCoordinates,
-    }),
-    [
-      hasStartedRecording,
-      subscribeToLocationUpdates,
-      unsubscribeFromLocationUpdates,
-      requestLocationPermission,
-      location,
-      routeCoordinates,
-    ],
-  );
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
+  const value: GPSContextType = {
+    hasStartedRecording,
+    subscribeToLocationUpdates,
+    unsubscribeFromLocationUpdates,
+    requestLocationPermission,
+    location,
+    routeCoordinates,
+  };
 
   return <GPSContext.Provider value={value}>{children}</GPSContext.Provider>;
 };

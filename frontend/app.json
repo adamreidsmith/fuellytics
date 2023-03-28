@@ -2,6 +2,7 @@
   "expo": {
     "name": "Fuellytics",
     "slug": "fuellytics",
+    "owner": "fuellytics",
     "description": "ENGO 651 app",
     "version": "1.0.0",
     "orientation": "portrait",

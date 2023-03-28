@@ -13,7 +13,7 @@ import { IMUContextType } from './types';
 
 export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
   const [enabled, setEnabled] = useState(false);
-  const [acceletometerWithGravity, setAccelerationWithGravity] = useState({
+  const [accelerometerWithGravity, setAccelerationWithGravity] = useState({
     x: 0,
     y: 0,
     z: 0,
@@ -117,14 +117,14 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
     () => ({
       accelerometerWithoutGravity,
       gyroscope,
-      acceletometerWithGravity,
+      accelerometerWithGravity,
       magnetometer,
       setEnabled,
       enabled,
     }),
     [
       accelerometerWithoutGravity,
-      acceletometerWithGravity,
+      accelerometerWithGravity,
       enabled,
       gyroscope,
       magnetometer,

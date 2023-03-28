@@ -9,7 +9,7 @@ export type IMUContextType = {
     beta: number;
     gamma: number;
   };
-  acceletometerWithGravity: {
+  accelerometerWithGravity: {
     x: number;
     y: number;
     z: number;
