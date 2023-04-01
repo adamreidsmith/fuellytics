@@ -7,4 +7,7 @@ export type GPSContextType = {
   subscribeToLocationUpdates: () => Promise<void>;
   unsubscribeFromLocationUpdates: () => void;
   requestLocationPermission: () => Promise<Location.PermissionStatus>;
+  setRouteCoordinates: React.Dispatch<
+    React.SetStateAction<Location.LocationObjectCoords[]>
+  >;
 };

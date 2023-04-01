@@ -13,20 +13,21 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { WEBSOCKET_URL } from '@env';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import Collapsible from 'react-native-collapsible';
 import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
-import { LineChart, Grid, YAxis } from 'react-native-svg-charts';
+import { LineChart, Grid, YAxis, XAxis } from 'react-native-svg-charts';
 import { IMUProvider, useIMUContext } from 'contexts/IMUContext';
 import { GPSProvider, useGPSContext } from 'contexts/GPSContext';
 import { useCarProfiles } from 'services/carProfile';
 import { useAuthContext } from 'context/AuthContext';
 import useDebounce from 'hooks/useDebounce';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
+import { SocketProvider } from 'contexts/SocketContext';
+import { useSocketContext } from 'contexts/SocketContext/useSocketContext';
 import { metrics } from './constants';
 import { FormattedCarProfile, GraphsData, MetricType } from './types';
 import { MessageSchema } from './schema';
@@ -35,6 +36,7 @@ const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
 const MapPage = () => {
+  const [count, setCount] = useState(0);
   const { user } = useAuthContext();
   const {
     accelerometerWithoutGravity,
@@ -51,30 +53,28 @@ const MapPage = () => {
     unsubscribeFromLocationUpdates,
     requestLocationPermission,
     routeCoordinates,
+    setRouteCoordinates,
   } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [graphsData, setGraphsData] = useState<GraphsData>({
-    fuel: [],
-    speed: [],
-    co2: [],
-    co: [],
-    nox: [],
-    unburnedHydrocarbons: [],
-    particulate: [],
-  });
+  const {
+    socket,
+    isConnected,
+    graphsData,
+    xValues,
+    setGraphsData,
+    numberOfPoints,
+  } = useSocketContext();
 
   const [startedAt, setStartedAt] = useState<Date | undefined>(undefined);
   const [endedAt, setEndedAt] = useState<Date | undefined>(undefined);
   const [openCollapsible, setOpenCollapsible] = useState<MetricType>('co2');
   const { navigate } = useNavigation();
-  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const { mutateAsync: createTrip } = useCreateTrip({
     onSuccess: (response) => {
       navigate('SummaryPage' as never, {} as never);
     },
   });
-  const [isConnected, setIsConnected] = useState(false);
   const [searchKey, setSearchKey] = useState('');
   const debouncedKey = useDebounce(searchKey);
   const [selectedCar, setSelectedCar] = useState<FormattedCarProfile | null>(
@@ -87,7 +87,15 @@ const MapPage = () => {
   });
 
   useEffect(() => {
-    if (enabled && isRecording && isConnected && selectedCar && socket) {
+    const interval = setInterval(() => {
+      setCount((prevCount) => prevCount + 1);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (socket && selectedCar && isRecording && isConnected) {
       const payload = {
         isSupercharged: selectedCar?.car.isSupercharged,
         displacement: selectedCar?.car.displacement,
@@ -102,18 +110,8 @@ const MapPage = () => {
 
       socket.send(JSON.stringify(payload));
     }
-  }, [
-    accelerometerWithoutGravity,
-    accelerometerWithGravity,
-    enabled,
-    gyroscope,
-    isConnected,
-    isRecording,
-    selectedCar,
-    socket,
-    magnetometer,
-    location,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, count, selectedCar, isRecording, isConnected]);
 
   useEffect(() => {
     if (isConnected && hasStartedRecording) {
@@ -122,49 +120,6 @@ const MapPage = () => {
       setEnabled(false);
     }
   }, [hasStartedRecording, isConnected, setEnabled]);
-
-  useEffect(() => {
-    const newSocket = new WebSocket(WEBSOCKET_URL);
-
-    newSocket.onopen = () => {
-      setSocket(newSocket);
-      setIsConnected(true);
-    };
-
-    newSocket.onmessage = (event) => {
-      const message = MessageSchema.safeParse(JSON.parse(event.data));
-
-      if (message.success) {
-        setGraphsData((state) => ({
-          ...state,
-          fuel: [...state.fuel, message.data.fuel],
-          speed: [...state.speed, message.data.speed],
-          co2: [...state.co2, message.data.co2],
-          co: [...state.co, message.data.co],
-          nox: [...state.nox, message.data.nox],
-          unburnedHydrocarbons: [
-            ...state.unburnedHydrocarbons,
-            message.data.unburnedHydrocarbons,
-          ],
-          particulate: [...state.particulate, message.data.particulate],
-        }));
-      }
-    };
-
-    newSocket.onerror = (error) => {
-      // eslint-disable-next-line no-console
-      console.error('WebSocket error:', error);
-    };
-
-    newSocket.onclose = () => {
-      setSocket(null);
-      setIsConnected(false);
-    };
-
-    return () => {
-      newSocket.close();
-    };
-  }, []);
 
   const onStartRecording = async () => {
     const response = await requestLocationPermission();
@@ -197,6 +152,15 @@ const MapPage = () => {
     }
 
     // SEND POST REQUEST, and on success navigate()
+    setStartedAt(undefined);
+    setEndedAt(undefined);
+    setSelectedCar(null);
+    setGraphsData({
+      fuel: [],
+      speed: [],
+      co2: [],
+    });
+    setRouteCoordinates([]);
   };
 
   const onContinueRecording = async () => {
@@ -256,26 +220,20 @@ const MapPage = () => {
                     </TouchableOpacity>
                     <Collapsible collapsed={openCollapsible !== metric.value}>
                       <View style={{ height: 150, flexDirection: 'row' }}>
-                        <YAxis
-                          data={graphsData[metric.value].slice(-20)}
-                          contentInset={contentInset}
-                          svg={{
-                            fill: 'grey',
-                            fontSize: 10,
-                          }}
-                          numberOfTicks={10}
-                          formatLabel={(value) => `${value} L`}
-                        />
                         <LineChart
-                          style={{ flex: 1, marginLeft: 16 }}
-                          data={graphsData[metric.value].slice(-20)}
-                          svg={{ stroke: 'rgb(134, 65, 244)' }}
+                          style={{ flex: 1 }}
+                          data={graphsData[metric.value]}
+                          contentInset={{ top: 20, bottom: 20 }}
+                          svg={{ stroke: 'green', strokeWidth: 2 }}
+                        />
+                        <YAxis
+                          style={{ marginLeft: 10, height: 200 }}
+                          data={graphsData[metric.value]}
                           contentInset={contentInset}
-                          animate
-                          animationDuration={300}
-                        >
-                          <Grid />
-                        </LineChart>
+                          svg={{ fontSize: 10, fill: 'black' }}
+                          formatLabel={(value) => `${value} L`}
+                          numberOfTicks={10}
+                        />
                       </View>
                     </Collapsible>
                   </View>
@@ -358,11 +316,13 @@ const MapPage = () => {
 };
 
 const App = () => (
-  <GPSProvider>
-    <IMUProvider>
-      <MapPage />
-    </IMUProvider>
-  </GPSProvider>
+  <SocketProvider>
+    <GPSProvider>
+      <IMUProvider>
+        <MapPage />
+      </IMUProvider>
+    </GPSProvider>
+  </SocketProvider>
 );
 
 export default App;

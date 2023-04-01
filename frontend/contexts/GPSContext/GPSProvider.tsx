@@ -37,7 +37,6 @@ export const GPSProvider: FC<PropsWithChildren> = ({ children }) => {
       {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: frequency,
-        distanceInterval: 1,
       },
       onLocationUpdate,
     );
@@ -60,6 +59,7 @@ export const GPSProvider: FC<PropsWithChildren> = ({ children }) => {
     requestLocationPermission,
     location,
     routeCoordinates,
+    setRouteCoordinates,
   };
 
   return <GPSContext.Provider value={value}>{children}</GPSContext.Provider>;
