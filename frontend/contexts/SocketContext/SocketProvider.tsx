@@ -4,7 +4,7 @@ import { MessageSchema } from './schema';
 import { SocketContext } from './SocketContext';
 import { GraphsData, SocketContextType } from './types';
 
-const numberOfPoints = 50;
+const numberOfPoints = 60;
 
 export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
