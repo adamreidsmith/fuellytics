@@ -42,7 +42,7 @@ const CarProfile: FC<CarProfileProps> = ({
     <Modal isVisible={isModalVisible}>
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.contentheader}>Create Car Profile</Text>
+          <Text style={styles.contentheader}>Search for a Vehicle:</Text>
           <View style={styles.searcharea}>
             <AutocompleteDropdown
               clearOnFocus={false}
@@ -68,7 +68,7 @@ const CarProfile: FC<CarProfileProps> = ({
           </View>
           <View style={styles.submitButton}>
             <Button
-              title="Enter my own car"
+              title="Enter my own vehicle"
               variant="success"
               onPress={() => {
                 navigate('CreateCarProfile' as never, {} as never);

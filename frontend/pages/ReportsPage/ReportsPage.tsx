@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   triplist: {
     position: 'relative',
-    width: 390,
+    width: '100%',
     alignContent: 'center',
   },
   tripItem: {

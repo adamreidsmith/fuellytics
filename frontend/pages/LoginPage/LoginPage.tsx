@@ -37,7 +37,7 @@ const LoginForm = () => {
     <View style={styles.container}>
       <View style={styles.altLogoContainer}>
         <Image
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background.png')}
+          source={require('../../assets/logos/fuellytics-high-resolution-logo-black-red-on-transparent-background.png')}
           style={styles.altLogo}
         />
       </View>
@@ -97,8 +97,9 @@ const LoginForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: '44%',
   },
   input: {
     borderWidth: 1,
