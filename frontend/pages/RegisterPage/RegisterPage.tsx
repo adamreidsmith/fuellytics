@@ -116,8 +116,9 @@ const RegisterForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: '43%',
   },
   input: {
     borderWidth: 1,

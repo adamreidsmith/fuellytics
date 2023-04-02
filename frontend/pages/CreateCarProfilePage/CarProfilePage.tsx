@@ -58,7 +58,7 @@ const CarProfile = () => {
           <Text>This is image</Text>
         </View> */}
         <View style={styles.button}>
-          <Text onPress={toggleModal}>Cannot Find my car.</Text>
+          <Text onPress={toggleModal}>Cannot find my vehicle</Text>
           <Modal isVisible={isModalVisible}>
             <View style={styles.popup}>
               <Text>Add Car Information</Text>
@@ -84,7 +84,7 @@ const CarProfile = () => {
               <TextInput style={styles.input} placeholder="Image url" />
               <View style={styles.rowContainer}>
                 <Button title="Create" />
-                <Button title="Cancle" onPress={toggleModal} />
+                <Button title="Cancel" onPress={toggleModal} />
               </View>
             </View>
           </Modal>

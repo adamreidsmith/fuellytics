@@ -97,8 +97,9 @@ const LoginForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: '55%',
   },
   input: {
     borderWidth: 1,
