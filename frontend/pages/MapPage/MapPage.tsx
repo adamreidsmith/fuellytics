@@ -83,7 +83,7 @@ const MapPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCount((prevCount) => prevCount + 1);
-    }, 1500);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);

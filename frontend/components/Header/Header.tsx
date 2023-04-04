@@ -4,7 +4,7 @@ const Header = () => (
   <View style={styles.headerContainer}>
     <Image
       style={styles.logo}
-      source={require('./assets/car-logo-removebg-preview.png')}
+      source={require('./assets/truck-red.png')}
     />
     <Image
       style={styles.logoName}

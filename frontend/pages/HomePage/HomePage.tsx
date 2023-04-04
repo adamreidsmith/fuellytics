@@ -50,8 +50,8 @@ const HomePage = () => {
             source={require('./assets/user.png')}
           />
         </View>
-        <Text style={styles.username}>Hello, {user?.username}</Text>
-        <Text style={styles.contentheader}>My car list:</Text>
+        <Text style={styles.username}>Hello {user?.username}</Text>
+        <Text style={styles.contentheader}>My Vehicles:</Text>
         <View style={styles.line} />
         <View style={styles.carList}>
           {status === 'loading' ? (
@@ -62,7 +62,7 @@ const HomePage = () => {
             <View style={styles.listContainer}>
               {carsProfiles.length === 0 ? (
                 <View style={styles.emptyCase}>
-                  <Text style={styles.contentheader}>No car registered.</Text>
+                  <Text style={styles.contentheader}>No vehicles registered.</Text>
                 </View>
               ) : (
                 <View>
@@ -79,7 +79,7 @@ const HomePage = () => {
                   {carsProfiles.map((car) => (
                     <View key={car.id} style={styles.cardContainer}>
                       <Text>
-                        {car.car.model} - {car.car.make}
+                        {car.car.year} {car.car.model} - {car.car.make}
                       </Text>
                       <TouchableOpacity
                         onPress={() => {
@@ -97,7 +97,7 @@ const HomePage = () => {
         </View>
         <View>
           <Button
-            title="Add new car"
+            title="Add new vehicle"
             onPress={() => {
               setModalVisible(true);
               // navigate('CreateCarProfilePage' as never, {} as never);
