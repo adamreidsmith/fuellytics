@@ -76,9 +76,7 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
         DeviceMotion.removeAllListeners();
       };
     }
-    return () => {
-      console.log('unmount');
-    };
+    return () => {};
   }, [enabled]);
 
   const _subscribe = () => {
@@ -107,9 +105,7 @@ export const IMUProvider: FC<PropsWithChildren> = ({ children }) => {
 
       return () => _unsubscribe();
     }
-    return () => {
-      console.log('unmount');
-    };
+    return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 

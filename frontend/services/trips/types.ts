@@ -8,12 +8,12 @@ import { z } from 'zod';
 import {
   PaginatedTripResponseSchema,
   TripSchemaPayload,
-  TripSchema,
+  CreateTripSchema,
 } from './schema';
 
 export type TripResponse = z.infer<typeof PaginatedTripResponseSchema>;
 
-export type CreateTripResponse = z.infer<typeof TripSchema>;
+export type CreateTripResponse = z.infer<typeof CreateTripSchema>;
 
 export interface TripsVariables
   extends Omit<

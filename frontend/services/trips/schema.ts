@@ -1,15 +1,30 @@
 import { CarProfileSchema } from 'services/carProfile/schema';
 import { z } from 'zod';
 
+export const RouteCoordinateSchema = z.object({
+  accuracy: z.number().nullable(),
+  altitude: z.number().nullable(),
+  altitudeAccuracy: z.number().nullable(),
+  heading: z.number().nullable(),
+  latitude: z.number(),
+  longitude: z.number(),
+  speed: z.number().nullable(),
+});
+
 export const TripSchema = z.object({
+  id: z.number(),
   startedAt: z.string(),
   endedAt: z.string(),
-  routeCoordinates: z.tuple([z.number(), z.number()]).array(),
+  routeCoordinates: RouteCoordinateSchema.array(),
   carProfile: CarProfileSchema,
   fuelConsumption: z.number(),
   co2Emissions: z.number(),
-  n2oEmissions: z.number(),
-  ch4Emissions: z.number(),
+  averageSpeed: z.number(),
+});
+
+export const CreateTripSchema = z.object({
+  success: z.boolean(),
+  data: TripSchema,
 });
 
 export const PaginatedTripResponseSchema = z.object({
@@ -20,5 +35,5 @@ export const PaginatedTripResponseSchema = z.object({
 });
 
 export const TripSchemaPayload = TripSchema.extend({
-  carId: z.string(),
-}).omit({ carProfile: true });
+  carProfileId: z.number(),
+}).omit({ carProfile: true, id: true });

@@ -9,6 +9,7 @@ export type MetricType = 'fuel' | 'co2' | 'speed';
 export type MetricOption = {
   label: string;
   value: MetricType;
+  units: string;
 };
 
 export type FormattedCarProfile = {

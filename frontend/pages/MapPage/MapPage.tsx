@@ -19,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
-import { LineChart, Grid, YAxis, XAxis } from 'react-native-svg-charts';
+import { LineChart, YAxis } from 'react-native-svg-charts';
 import { IMUProvider, useIMUContext } from 'contexts/IMUContext';
 import { GPSProvider, useGPSContext } from 'contexts/GPSContext';
 import { useCarProfiles } from 'services/carProfile';
@@ -28,9 +28,9 @@ import useDebounce from 'hooks/useDebounce';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import { SocketProvider } from 'contexts/SocketContext';
 import { useSocketContext } from 'contexts/SocketContext/useSocketContext';
+import { format } from 'utils/date';
 import { metrics } from './constants';
-import { FormattedCarProfile, GraphsData, MetricType } from './types';
-import { MessageSchema } from './schema';
+import { FormattedCarProfile, MetricType } from './types';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
@@ -56,23 +56,17 @@ const MapPage = () => {
     setRouteCoordinates,
   } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const {
-    socket,
-    isConnected,
-    graphsData,
-    xValues,
-    setGraphsData,
-    numberOfPoints,
-  } = useSocketContext();
+  const { socket, isConnected, graphsData, setGraphsData } = useSocketContext();
 
   const [startedAt, setStartedAt] = useState<Date | undefined>(undefined);
-  const [endedAt, setEndedAt] = useState<Date | undefined>(undefined);
   const [openCollapsible, setOpenCollapsible] = useState<MetricType>('co2');
   const { navigate } = useNavigation();
   const [isRecording, setIsRecording] = useState(false);
   const { mutateAsync: createTrip } = useCreateTrip({
     onSuccess: (response) => {
-      navigate('SummaryPage' as never, {} as never);
+      if (response.success) {
+        navigate('SummaryPage' as never, {} as never);
+      }
     },
   });
   const [searchKey, setSearchKey] = useState('');
@@ -125,7 +119,7 @@ const MapPage = () => {
     const response = await requestLocationPermission();
 
     if (response === 'granted') {
-      await subscribeToLocationUpdates();
+      subscribeToLocationUpdates();
       setIsRecording(true);
       setStartedAt(new Date());
     }
@@ -134,26 +128,26 @@ const MapPage = () => {
   const onPauseRecording = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
-    setEndedAt(new Date());
   };
 
   const onEndRecording = () => {
     unsubscribeFromLocationUpdates();
     setIsRecording(false);
 
-    if (selectedCar && startedAt && endedAt) {
-      // createTrip({
-      //   startedAt: startedAt.toISOString(),
-      //   endedAt: endedAt.toISOString(),
-      //   carId: selectedCar?.id,
-      //   routeCoordinates,
-      //   co2Emissions: 0,
-      // });
+    if (selectedCar && startedAt) {
+      createTrip({
+        startedAt: format(startedAt, 'YYYY-MM-DDTHH:mm:ss[Z]'),
+        endedAt: format(new Date(), 'YYYY-MM-DDTHH:mm:ss[Z]'),
+        routeCoordinates,
+        co2Emissions: 10,
+        averageSpeed: 10,
+        carProfileId: parseInt(selectedCar?.id, 10),
+        fuelConsumption: 10,
+      });
     }
 
     // SEND POST REQUEST, and on success navigate()
     setStartedAt(undefined);
-    setEndedAt(undefined);
     setSelectedCar(null);
     setGraphsData({
       fuel: [],
@@ -164,7 +158,7 @@ const MapPage = () => {
   };
 
   const onContinueRecording = async () => {
-    await subscribeToLocationUpdates();
+    subscribeToLocationUpdates();
     setIsRecording(true);
   };
 
@@ -231,7 +225,7 @@ const MapPage = () => {
                           data={graphsData[metric.value]}
                           contentInset={contentInset}
                           svg={{ fontSize: 10, fill: 'black' }}
-                          formatLabel={(value) => `${value} L`}
+                          formatLabel={(value) => `${value} ${metric.units}`}
                           numberOfTicks={10}
                         />
                       </View>
@@ -277,35 +271,17 @@ const MapPage = () => {
                 onBlur={() => setSearchKey('')}
               />
               {socket ? (
-                <>
-                  <View style={styles.actionButtons}>
-                    <Button
-                      title="Start recording"
-                      onPress={() => onStartRecording()}
-                      disabled={!selectedCar}
-                    />
-                  </View>
-                  <View style={styles.actionButtons}>
-                    <Button
-                      title="Send event"
-                      variant="secondary"
-                      onPress={() => {
-                        const payload = {
-                          isSupercharged: selectedCar?.car.isSupercharged,
-                          displacement: selectedCar?.car.displacement,
-                          drag: selectedCar?.car.id,
-                          accelerometerWithoutGravity,
-                          accelerometerWithGravity,
-                          gyroscope,
-                        };
-
-                        socket?.send(JSON.stringify(payload));
-                      }}
-                    />
-                  </View>
-                </>
+                <View style={styles.actionButtons}>
+                  <Button
+                    title="Start recording"
+                    onPress={() => onStartRecording()}
+                    disabled={!selectedCar}
+                  />
+                </View>
               ) : (
-                <Text>Connecting...</Text>
+                <View style={styles.loader}>
+                  <Text>Connecting...</Text>
+                </View>
               )}
             </View>
           )}
@@ -316,18 +292,25 @@ const MapPage = () => {
 };
 
 const App = () => (
-  <SocketProvider>
+  <IMUProvider>
     <GPSProvider>
-      <IMUProvider>
+      <SocketProvider>
         <MapPage />
-      </IMUProvider>
+      </SocketProvider>
     </GPSProvider>
-  </SocketProvider>
+  </IMUProvider>
 );
 
 export default App;
 
 const styles = StyleSheet.create({
+  loader: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingTop: 32,
+  },
   contentContainer: {
     alignItems: 'center',
   },

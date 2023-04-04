@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
+import Header from 'components/Header/Header';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
@@ -25,6 +26,7 @@ const DetailReportPage = () => {
   const [routeCoordinates, setRouteCoordinates] = useState<
     LocationObjectCoords[]
   >([]);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [locationSubscription, setLocationSubscription] =
     useState<Location.LocationSubscription | null>(null);
@@ -66,16 +68,7 @@ const DetailReportPage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logos/car-logo-removebg-preview.png')}
-        />
-        <Image
-          style={styles.logoname}
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
-        />
-      </View>
+      <Header />
       <MapView
         style={styles.map}
         initialRegion={{
@@ -127,10 +120,8 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   map: {
-    position: 'absolute',
-    height: 310,
-    width: 389,
-    top: 200,
+    height: '50%',
+    width: '100%',
   },
   bubble: {
     flex: 1,
@@ -197,11 +188,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   button: {
-    position: 'absolute',
-    height: 40,
-    width: 120,
-    left: 136,
-    top: 700,
     borderRadius: 2,
     backgroundColor: '#AAAAAA',
   },

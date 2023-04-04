@@ -13,7 +13,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import { useTrips } from 'services/trips';
 import { useNavigation } from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
+import FiltersPopup from './components/FiltersPopup/FiltersPopup';
 
 const ReportsPage = () => {
   const { navigate } = useNavigation();
@@ -26,167 +29,113 @@ const ReportsPage = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const [startdate, setstartDate] = useState(new Date(1598051730000));
-  const [stopdate, setstopDate] = useState(new Date(1598051730000));
-  const [show, setShow] = useState(true);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
 
-  const onChangeStart = (event, selectedDate) => {
-    const currentDate = selectedDate;
-
-    setShow(true);
-    setstartDate(currentDate);
+  const onChangeStartDate = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date | undefined,
+  ) => {
+    if (selectedDate) {
+      setStartDate(selectedDate);
+    }
   };
 
-  const onChangeStop = (event, selectedDate) => {
-    const currentDate = selectedDate;
-
-    setShow(true);
-    setstopDate(currentDate);
+  const onChangeEndDate = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date | undefined,
+  ) => {
+    if (selectedDate) {
+      setEndDate(selectedDate);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Header />
-      <View style={styles.contentheadercontainer}>
-        <Text style={styles.contentheader}>My Trips</Text>
-        <TouchableOpacity onPress={toggleModal}>
-          <Image
-            style={styles.filtericon}
-            source={require('../../assets/icons/Timesheet.png')}
-          />
-          <Modal isVisible={isModalVisible}>
-            <View style={styles.popup}>
-              <Text> Select Date Range</Text>
-              <Text>Start Date: </Text>
-              {show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={startdate}
-                  mode="date"
-                  onChange={onChangeStart}
-                />
-              )}
-              <Text>Stop Date: </Text>
-              {show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={stopdate}
-                  mode="date"
-                  onChange={onChangeStop}
-                />
-              )}
-              <Button title="Apply" />
-              <Button title="Cancel" onPress={toggleModal} />
-            </View>
-          </Modal>
-        </TouchableOpacity>
+      <View style={styles.contentContainer}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.contentheader}>My Trips</Text>
+          <TouchableOpacity onPress={toggleModal}>
+            <Image source={require('../../assets/icons/Timesheet.png')} />
+          </TouchableOpacity>
+        </View>
+        <ScrollView style={styles.tripList}>
+          <View style={styles.tripItem}>
+            <Button
+              title="Trip1"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
+          </View>
+          <View style={styles.tripItem}>
+            <Button
+              title="Trip2"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
+          </View>
+          <View style={styles.tripItem}>
+            <Button
+              title="Trip3"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
+          </View>
+          <View style={styles.tripItem}>
+            <Button
+              title="Trip4"
+              onPress={() => {
+                navigate('DetailReportPage' as never, {} as never);
+              }}
+            />
+          </View>
+        </ScrollView>
       </View>
-      <ScrollView style={styles.triplist}>
-        <View style={styles.tripItem}>
-          <Button
-            title="Trip1"
-            onPress={() => {
-              navigate('DetailReportPage' as never, {} as never);
-            }}
-          />
-        </View>
-        <View style={styles.tripItem}>
-          <Button
-            title="Trip2"
-            onPress={() => {
-              navigate('DetailReportPage' as never, {} as never);
-            }}
-          />
-        </View>
-        <View style={styles.tripItem}>
-          <Button
-            title="Trip3"
-            onPress={() => {
-              navigate('DetailReportPage' as never, {} as never);
-            }}
-          />
-        </View>
-        <View style={styles.tripItem}>
-          <Button
-            title="Trip4"
-            onPress={() => {
-              navigate('DetailReportPage' as never, {} as never);
-            }}
-          />
-        </View>
-      </ScrollView>
+      <FiltersPopup
+        isModalVisible={isModalVisible}
+        startDate={startDate}
+        endDate={endDate}
+        setModalVisible={setModalVisible}
+        onChangeStartDate={onChangeStartDate}
+        onChangeEndDate={onChangeEndDate}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     position: 'relative',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
-  header: {
-    position: 'absolute',
-    width: 390,
-    height: 152,
-    left: 0,
-    top: 0,
-    backgroundColor: '#AAAAAA',
+  contentContainer: {
+    padding: 24,
   },
-  logo: {
-    position: 'absolute',
-    width: 70,
-    height: 60,
-    left: 26,
-    top: 66,
-  },
-  logoname: {
-    position: 'absolute',
-    width: 250,
-    height: 40,
-    left: 126,
-    top: 76,
-  },
-  filtericon: {
-    marginTop: 16,
-  },
-  contentheadercontainer: {
-    position: 'relative',
+  headerContainer: {
+    display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    marginLeft: 10,
-    marginRight: 10,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   contentheader: {
-    position: 'relative',
     fontSize: 24,
-    marginTop: 16,
   },
-  triplist: {
-    position: 'relative',
-    width: 390,
-    alignContent: 'center',
+  tripList: {
+    width: '100%',
   },
   tripItem: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#D9D9D9',
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 3,
     borderColor: '#fffff',
     marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  popup: {
-    // flex: 1,
-    height: 500,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 1,
-    backgroundColor: 'white',
   },
 });
 
