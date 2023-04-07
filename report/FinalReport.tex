@@ -129,7 +129,20 @@ Selecting the ``Start recording'' button will begin a trip recording.  Figure \r
 \centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
 \caption{\label{fig:recording} REPLACE FIGURE WITH IMAGES OF RECORDING.}
 \end{figure}
-These screens contain an interactive map which tracks the user's location in real-time.  A pin is placed on the map showing the users current location, and their track is shown as a black polyline which updates as they move.  A panel slides up from the bottom of the page to reveal plots the current CO$_2$ emissions of the vehicle in mL/s, the current fuel consumption in mL/s, and the current vehicle speed in m/s.  These plots dynamically update every second, and show data for the last minute.  At any time, the recording can be paused by selecting the ``Pause recording'' button, and continued by selecting ``Continue recording''
+These screens contain an interactive map which tracks the user's location in real-time.  A pin is placed on the map showing the users current location, and their track is shown as a black polyline which updates as they move.  A panel slides up from the bottom of the page to reveal plots the current CO$_2$ emissions of the vehicle in mL/s, the current fuel consumption in mL/s, and the current vehicle speed in m/s.  These plots dynamically update every second, and show data for the last minute.  At any time, the recording can be paused by selecting the ``Pause Recording'' button, and continued by selecting ``Continue Recording''.  Once the user arrives at their location, they can select ``End Recording \& Save'' to save their trip.  As shown in Figure \ref*{fig:confirmation}, a confirmation page will appear with a summary of their trip including the elapsed time, the total gas consumption, and the total CO$_2$ emissions.
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
+\caption{\label{fig:confirmation} REPLACE FIGURE WITH IMAGE OF CONFIRMATION PAGE.}
+\end{figure}
+Selecting the ``Back'' button brings the user back to the map page.
+
+Summaries of the users trips are available on the reports page, shown in Figure \ref*{fig:reports}.
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
+\caption{\label{fig:reports} REPLACE FIGURE WITH IMAGES OF REPORTS PAGE.}
+\end{figure}
+Here, all of the users past trips appear in a scrollable list. The calendar icon above the trip list opens a date range selector widget to filter the trip list within a specified date range. Selecting a trip reveals the trip information page to show further information about the trip including the start and end times, the vehicle used, the total CO$_2$ emissions, the total fuel consumption, and the average speed.  An interactive map is also displayed showing the vehicle route. The user can return to the trips page by selecting the ``Back'' button.
+
 
 \section{Lessons learned}
 
@@ -171,7 +184,7 @@ One of the most challenging technical aspects of this project was the alignment 
 
 \refinit{analytic-fc} M. Ben-Chaim, E. Shmerling, and A. Kuperman. ``Analytic Modeling of Vehicle Fuel Consumption,'' \textit{Energies}, vol. 6, no. 1, pp. 117-127, 2013. \url{https://doi.org/10.3390/en6010117}
 
-\refinit{wvu-ai} S. Katreddi and A. Thiruvengadam. ``Trip Based Modeling of Fuel Consumption in Modern Heavy-Duty Vehicles Using Artifificial Intelligence,'' \textit{Energies}, vol. 14, no. 24, p. 8592, 2021. \url{https://doi.org/10.3390/en14248592}
+\refinit{wvu-ai} S. Katreddi and A. Thiruvengadam. ``Trip Based Modeling of Fuel Consumption in Modern Heavy-Duty Vehicles Using Artificial Intelligence,'' \textit{Energies}, vol. 14, no. 24, p. 8592, 2021. \url{https://doi.org/10.3390/en14248592}
 
 \refinit{fc-phone} Y. Yao, X. Zhao, C. Liu, J. Rong, Y. Zhang, Z. Dong, and Y. Su. ``Vehicle Fuel Consumption Prediction Method Based on Driving Behavior Data Collected from Smartphones,'' \textit{Journal of Advanced Transportation}, vol. 2020, 2020. \url{https://doi.org/10.1155/2020/9263605}
 
