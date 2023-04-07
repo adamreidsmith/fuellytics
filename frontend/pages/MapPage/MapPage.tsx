@@ -242,7 +242,7 @@ const MapPage = () => {
                     />
                   ) : (
                     <Button
-                      title="Continue recording"
+                      title="Continue Recording"
                       variant="success"
                       onPress={() => onContinueRecording()}
                     />
