@@ -15,6 +15,12 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
     speed: [],
     co2: [],
   });
+  const [counters, setCounters] = useState({
+    samplePoints: 0,
+    fuelConsumption: 0,
+    averageSpeed: 0,
+    co2Emissions: 0,
+  });
 
   useEffect(() => {
     const newSocket = new WebSocket(WEBSOCKET_URL);
@@ -52,6 +58,16 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
             message.data.co2Current,
           ],
         }));
+
+        setCounters((state) => ({
+          ...state,
+          samplePoints: state.samplePoints + 1,
+          fuelConsumption: state.fuelConsumption + message.data.fuelCurrent,
+          averageSpeed:
+            (state.averageSpeed + message.data.speed) /
+            (state.samplePoints + 1),
+          co2Emissions: state.co2Emissions + message.data.co2Current,
+        }));
       }
     };
 
@@ -79,8 +95,9 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
       xValues,
       setGraphsData,
       numberOfPoints,
+      counters,
     }),
-    [socket, isConnected, graphsData, xValues],
+    [socket, isConnected, graphsData, xValues, counters],
   );
 
   return (

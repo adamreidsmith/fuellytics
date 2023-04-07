@@ -56,7 +56,8 @@ const MapPage = () => {
     setRouteCoordinates,
   } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const { socket, isConnected, graphsData, setGraphsData } = useSocketContext();
+  const { socket, isConnected, graphsData, setGraphsData, counters } =
+    useSocketContext();
 
   const [startedAt, setStartedAt] = useState<Date | undefined>(undefined);
   const [openCollapsible, setOpenCollapsible] = useState<MetricType>('co2');
@@ -139,10 +140,10 @@ const MapPage = () => {
         startedAt: format(startedAt, 'YYYY-MM-DDTHH:mm:ss[Z]'),
         endedAt: format(new Date(), 'YYYY-MM-DDTHH:mm:ss[Z]'),
         routeCoordinates,
-        co2Emissions: 10,
-        averageSpeed: 10,
+        co2Emissions: counters.co2Emissions,
+        averageSpeed: counters.averageSpeed,
         carProfileId: parseInt(selectedCar?.id, 10),
-        fuelConsumption: 10,
+        fuelConsumption: counters.fuelConsumption,
       });
     }
 
@@ -174,7 +175,7 @@ const MapPage = () => {
       <View style={styles.container}>
         <MapView
           style={styles.map}
-          region={{
+          initialRegion={{
             latitude: location?.coords.latitude || LATITUDE,
             longitude: location?.coords.longitude || LONGITUDE,
             latitudeDelta: 0.0922,

@@ -4,12 +4,12 @@ export const metrics: MetricOption[] = [
   {
     label: 'CO2 emissions',
     value: 'co2',
-    units: 'L',
+    units: 'mL/s',
   },
   {
     label: 'Fuel consumption',
     value: 'fuel',
-    units: 'L',
+    units: 'mL/s',
   },
   {
     label: 'Velocity',

@@ -1,21 +1,13 @@
 import { Text, View, StyleSheet, Image, Button, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Header from 'components/Header';
 
 const SummaryPage = () => {
   const { navigate } = useNavigation();
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logos/car-logo-removebg-preview.png')}
-        />
-        <Image
-          style={styles.logoname}
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-color-on-transparent-background-2-cut.png')}
-        />
-      </View>
+      <Header />
       <View style={styles.content}>
         <Image
           style={styles.pic}

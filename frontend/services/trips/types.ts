@@ -3,25 +3,37 @@ import {
   QueryKey,
   UseInfiniteQueryOptions,
   UseMutationOptions,
+  UseQueryOptions,
 } from 'react-query';
 import { z } from 'zod';
 import {
   PaginatedTripResponseSchema,
   TripSchemaPayload,
   CreateTripSchema,
+  TripSchema,
 } from './schema';
 
-export type TripResponse = z.infer<typeof PaginatedTripResponseSchema>;
+export type TripResponse = z.infer<typeof TripSchema>;
+
+export interface TripVariables
+  extends Omit<
+    UseQueryOptions<TripResponse, AxiosError, TripResponse, QueryKey>,
+    'queryFn'
+  > {
+  tripId?: number;
+}
+
+export type PaginatedTripResponse = z.infer<typeof PaginatedTripResponseSchema>;
 
 export type CreateTripResponse = z.infer<typeof CreateTripSchema>;
 
 export interface TripsVariables
   extends Omit<
     UseInfiniteQueryOptions<
-      TripResponse,
+      PaginatedTripResponse,
       AxiosError,
-      TripResponse,
-      TripResponse,
+      PaginatedTripResponse,
+      PaginatedTripResponse,
       QueryKey
     >,
     'queryKey' | 'queryFn' | 'getNextPageParam' | 'getPreviousPageParam'

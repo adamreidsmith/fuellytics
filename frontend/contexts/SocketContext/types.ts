@@ -6,6 +6,12 @@ export type SocketContextType = {
   xValues: number[];
   setGraphsData: React.Dispatch<React.SetStateAction<GraphsData>>;
   numberOfPoints: number;
+  counters: {
+    samplePoints: number;
+    fuelConsumption: number;
+    averageSpeed: number;
+    co2Emissions: number;
+  };
 };
 
 export type GraphsData = {

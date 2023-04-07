@@ -56,4 +56,9 @@ export const pages = [
 export type ParamList = {
   IMUPage: undefined;
   MapPage: undefined;
+  DetailReportPage:
+    | {
+        itemId: number;
+      }
+    | undefined;
 };
