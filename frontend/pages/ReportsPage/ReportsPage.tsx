@@ -9,13 +9,9 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import Modal from 'react-native-modal';
 import { useTrips } from 'services/trips';
 import { useNavigation } from '@react-navigation/native';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'utils/date';
 import { FlashList } from '@shopify/flash-list';
 import FiltersPopup from './components/FiltersPopup/FiltersPopup';
@@ -23,8 +19,7 @@ import FiltersPopup from './components/FiltersPopup/FiltersPopup';
 const ReportsPage = () => {
   const { navigate } = useNavigation();
   const { user } = useAuthContext();
-  const { trips, status, fetchNextPage } = useTrips({ userId: user?.id });
-  const [selectedRange, setRange] = useState({});
+  const { trips, fetchNextPage } = useTrips({ userId: user?.id });
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -34,21 +29,21 @@ const ReportsPage = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
 
-  const onChangeStartDate = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date | undefined,
-  ) => {
-    if (selectedDate) {
-      setStartDate(selectedDate);
+  const onChangeStartDate = (event: {
+    event: DateTimePickerEvent;
+    date?: Date;
+  }) => {
+    if (event.date) {
+      setStartDate(event.date);
     }
   };
 
-  const onChangeEndDate = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date | undefined,
-  ) => {
-    if (selectedDate) {
-      setEndDate(selectedDate);
+  const onChangeEndDate = (event: {
+    event: DateTimePickerEvent;
+    date?: Date;
+  }) => {
+    if (event.date) {
+      setEndDate(event.date);
     }
   };
 

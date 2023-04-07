@@ -1,10 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Button as RNButton,
-} from 'react-native';
+import { Text, View, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from 'context/AuthContext';
 import { useCSRFToken } from 'services/authentication';

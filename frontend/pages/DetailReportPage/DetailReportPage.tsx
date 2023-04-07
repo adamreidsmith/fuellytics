@@ -1,15 +1,7 @@
 import { useState } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
 import Header from 'components/Header/Header';
 import { ParamList } from 'pages';
@@ -67,8 +59,12 @@ const DetailReportPage = () => {
               Ended at: {format(data.endedAt, 'DD/MM/YYYY - HH:mm:ss')}
             </Text>
           )}
-          <Text>Fuel consumption: {data?.fuelConsumption} L</Text>
-          <Text>CO2 emission: {data?.co2Emissions} L</Text>
+          <Text>
+            Car used: {data?.carProfile.car.model} - {data?.carProfile.car.make}{' '}
+            - {data?.carProfile.car.year}
+          </Text>
+          <Text>Fuel consumption: {data?.fuelConsumption} mL/s</Text>
+          <Text>CO2 emission: {data?.co2Emissions} mL/s</Text>
           <Text>Average speed: {data?.averageSpeed} m/s</Text>
         </View>
         <View style={styles.button}>
