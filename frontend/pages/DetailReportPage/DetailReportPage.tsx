@@ -4,67 +4,41 @@ import {
   View,
   StyleSheet,
   Image,
-  Button,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
 import Header from 'components/Header/Header';
+import { ParamList } from 'pages';
+import { useTrip } from 'services/trips';
+import Button from 'components/Button';
+import { format } from 'utils/date';
 
 const LATITUDE = 51.0447;
 const LONGITUDE = -114.066666;
 
 const DetailReportPage = () => {
   const { navigate } = useNavigation();
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null,
-  );
-  const [isRecording, setIsRecording] = useState(false);
+  const route = useRoute<RouteProp<ParamList, 'DetailReportPage'>>();
   const [routeCoordinates, setRouteCoordinates] = useState<
     LocationObjectCoords[]
   >([]);
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [locationSubscription, setLocationSubscription] =
-    useState<Location.LocationSubscription | null>(null);
+  const { data, status } = useTrip({
+    tripId: route.params?.itemId,
+    onSuccess: (response) => {
+      if (response) {
+        setRouteCoordinates(response.routeCoordinates);
+      }
+    },
+  });
 
-  const requestLocationPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== 'granted') {
-      setErrorMessage('Permission to access location was denied');
-    }
-
-    return status;
-  };
-
-  const subscribeToLocationUpdates = async () => {
-    const subscription = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 1000,
-        distanceInterval: 1,
-      },
-      onLocationUpdate,
-    );
-
-    setLocationSubscription(subscription);
-  };
-
-  const unsubscribeFromLocationUpdates = () => {
-    if (locationSubscription) {
-      locationSubscription.remove();
-      setLocationSubscription(null);
-    }
-  };
-
-  const onLocationUpdate: Location.LocationCallback = (location) => {
-    setLocation(location);
-    setRouteCoordinates((state) => [...state, location.coords]);
-  };
+  if (status === 'loading') {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -72,37 +46,37 @@ const DetailReportPage = () => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: location?.coords.latitude || LATITUDE,
-          longitude: location?.coords.longitude || LONGITUDE,
+          latitude: routeCoordinates[0]?.latitude || LATITUDE,
+          longitude: routeCoordinates[0]?.longitude || LONGITUDE,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
         <Polyline coordinates={routeCoordinates} strokeWidth={5} />
-        <Marker.Animated
-          coordinate={{
-            latitude: location?.coords.latitude || LATITUDE,
-            longitude: location?.coords.longitude || LONGITUDE,
-          }}
-        />
       </MapView>
       <View style={styles.bottomSheet}>
         <Text style={styles.contentheader}>Trip Information</Text>
         <View style={styles.detail}>
-          <Text>Total Time:</Text>
-          <Text>Departure:</Text>
-          <Text>Destination:</Text>
-          <Text>Gas consumption:</Text>
-          <Text>Approximate Expense:</Text>
-          <Text>CO2 emission:</Text>
-          <Text>Methane emission:</Text>
-          <Text>N2O emission:</Text>
+          {data?.startedAt && (
+            <Text>
+              Started at: {format(data.startedAt, 'DD/MM/YYYY - HH:mm:ss')}
+            </Text>
+          )}
+          {data?.endedAt && (
+            <Text>
+              Ended at: {format(data.endedAt, 'DD/MM/YYYY - HH:mm:ss')}
+            </Text>
+          )}
+          <Text>Fuel consumption: {data?.fuelConsumption} L</Text>
+          <Text>CO2 emission: {data?.co2Emissions} L</Text>
+          <Text>Average speed: {data?.averageSpeed} m/s</Text>
         </View>
         <View style={styles.button}>
           <Button
             title="Back"
             onPress={() => {
-              navigate('ReportsPage' as never, {} as never);
+              navigate('ReportsPage' as never);
+              setRouteCoordinates([]);
             }}
           />
         </View>
@@ -168,24 +142,16 @@ const styles = StyleSheet.create({
     borderRadius: 0,
   },
   contentheader: {
-    position: 'absolute',
-    height: 27,
-    width: 163,
-    left: 11,
-    top: 170,
     fontSize: 18,
+    marginBottom: 16,
+    fontWeight: 'bold',
   },
   bottomSheet: {
-    position: 'relative',
+    padding: 24,
   },
   detail: {
-    position: 'absolute',
-    height: 144,
-    width: 161,
-    left: 35,
-    top: 530,
     fontSize: 18,
-    alignItems: 'flex-end',
+    marginBottom: 16,
   },
   button: {
     borderRadius: 2,
