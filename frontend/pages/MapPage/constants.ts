@@ -14,6 +14,6 @@ export const metrics: MetricOption[] = [
   {
     label: 'Velocity',
     value: 'speed',
-    units: 'm/s',
+    units: 'km/h',
   },
 ];
