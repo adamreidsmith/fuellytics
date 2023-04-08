@@ -1,16 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Button from 'components/Button/Button';
 import { FilterProps } from './types';
-
-type DateInnerType = {
-  event: DateTimePickerEvent;
-  date?: Date;
-};
 
 const FiltersPopup: FC<FilterProps> = ({
   isModalVisible,
@@ -20,15 +13,10 @@ const FiltersPopup: FC<FilterProps> = ({
   onChangeStartDate,
   onChangeEndDate,
 }) => {
-  const [startDateInner, setStartDateInner] = useState<DateInnerType>();
-  const [endDateInner, setEndDateInner] = useState<DateInnerType>();
-
-  useEffect(() => {
-    if (!isModalVisible) {
-      setStartDateInner(undefined);
-      setEndDateInner(undefined);
-    }
-  }, [isModalVisible]);
+  const [startDateInner, setStartDateInner] = useState<Date>(
+    startDate || new Date(),
+  );
+  const [endDateInner, setEndDateInner] = useState<Date>(endDate || new Date());
 
   return (
     <Modal isVisible={isModalVisible}>
@@ -37,16 +25,15 @@ const FiltersPopup: FC<FilterProps> = ({
           Filter trips by date range
         </Text>
         <View style={[styles.flex, styles.marginBottom]}>
-          <Text style={styles.bold}>Start Date: </Text>
+          <Text style={styles.bold}>Start Date:</Text>
           <DateTimePicker
             testID="dateTimePicker"
-            value={startDate}
+            value={startDateInner}
             mode="date"
             onChange={(event, date) => {
-              setStartDateInner({
-                event,
-                date,
-              });
+              if (date) {
+                setStartDateInner(date);
+              }
             }}
           />
         </View>
@@ -54,13 +41,12 @@ const FiltersPopup: FC<FilterProps> = ({
           <Text style={styles.bold}>End Date:</Text>
           <DateTimePicker
             testID="dateTimePicker"
-            value={endDate}
+            value={endDateInner}
             mode="date"
             onChange={(event, date) => {
-              setEndDateInner({
-                event,
-                date,
-              });
+              if (date) {
+                setEndDateInner(date);
+              }
             }}
           />
         </View>
@@ -71,7 +57,19 @@ const FiltersPopup: FC<FilterProps> = ({
               if (startDateInner && endDateInner) {
                 onChangeStartDate(startDateInner);
                 onChangeEndDate(endDateInner);
+                setModalVisible(false);
               }
+            }}
+          />
+        </View>
+        <View style={styles.marginBottom}>
+          <Button
+            title="Clear"
+            variant="success"
+            onPress={() => {
+              onChangeStartDate(undefined);
+              onChangeEndDate(undefined);
+              setModalVisible(false);
             }}
           />
         </View>

@@ -36,4 +36,11 @@ export const PaginatedTripResponseSchema = z.object({
 
 export const TripSchemaPayload = TripSchema.extend({
   carProfileId: z.number(),
-}).omit({ carProfile: true, id: true });
+})
+  .omit({ carProfile: true, id: true })
+  .transform(({ fuelConsumption, co2Emissions, averageSpeed, ...rest }) => ({
+    ...rest,
+    fuelConsumption: parseInt(fuelConsumption.toFixed(5), 10),
+    co2Emissions: parseInt(co2Emissions.toFixed(5), 10),
+    averageSpeed: parseInt(averageSpeed.toFixed(5), 10),
+  }));

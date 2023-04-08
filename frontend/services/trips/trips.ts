@@ -9,10 +9,15 @@ import {
   TripVariables,
 } from './types';
 
-export const useTrips = ({ userId, ...opts }: TripsVariables = {}) => {
+export const useTrips = ({
+  userId,
+  startedAt,
+  endedAt,
+  ...opts
+}: TripsVariables = {}) => {
   const { data, status, refetch, fetchNextPage, hasNextPage } =
     useInfiniteQuery<PaginatedTripResponse, AxiosError>(
-      ['getTrips', { userId }],
+      ['getTrips', { userId, startedAt, endedAt }],
       getTrips,
       {
         getNextPageParam: (lastPage) => lastPage?.next ?? undefined,

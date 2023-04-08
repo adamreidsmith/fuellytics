@@ -19,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import Button from 'components/Button';
 import { useCreateTrip } from 'services/trips';
-import { LineChart, YAxis } from 'react-native-svg-charts';
+import { Grid, LineChart, XAxis, YAxis } from 'react-native-svg-charts';
 import { IMUProvider, useIMUContext } from 'contexts/IMUContext';
 import { GPSProvider, useGPSContext } from 'contexts/GPSContext';
 import { useCarProfiles } from 'services/carProfile';
@@ -43,7 +43,6 @@ const MapPage = () => {
     accelerometerWithGravity,
     gyroscope,
     setEnabled,
-    enabled,
     magnetometer,
   } = useIMUContext();
   const {
@@ -56,7 +55,7 @@ const MapPage = () => {
     setRouteCoordinates,
   } = useGPSContext();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const { socket, isConnected, graphsData, setGraphsData, counters } =
+  const { socket, isConnected, graphsData, setGraphsData, counters, xValues } =
     useSocketContext();
 
   const [startedAt, setStartedAt] = useState<Date | undefined>(undefined);
@@ -66,7 +65,7 @@ const MapPage = () => {
   const { mutateAsync: createTrip } = useCreateTrip({
     onSuccess: (response) => {
       if (response.success) {
-        navigate('SummaryPage' as never, {} as never);
+        navigate('SummaryPage' as never, { itemId: response.data.id } as never);
       }
     },
   });
@@ -164,7 +163,7 @@ const MapPage = () => {
   };
 
   const snapPoints = useMemo(
-    () => ['10%', hasStartedRecording ? '70%' : '30%'],
+    () => ['10%', hasStartedRecording ? '70%' : '22.5%'],
     [hasStartedRecording],
   );
 
@@ -210,25 +209,27 @@ const MapPage = () => {
                       <Text
                         style={[styles.detailsFont, styles.collapsibleTitle]}
                       >
-                        {metric.label}:
+                        {metric.label}: Time vs {metric.units}
                       </Text>
                     </TouchableOpacity>
                     <Collapsible collapsed={openCollapsible !== metric.value}>
                       <View style={{ height: 150, flexDirection: 'row' }}>
+                        <YAxis
+                          style={{ marginRight: 4, height: '100%', width: 64 }}
+                          data={graphsData[metric.value]}
+                          contentInset={contentInset}
+                          svg={{ fontSize: 10, fill: 'black' }}
+                          formatLabel={(value) => `${value} ${metric.units}`}
+                          numberOfTicks={6}
+                        />
                         <LineChart
                           style={{ flex: 1 }}
                           data={graphsData[metric.value]}
                           contentInset={{ top: 20, bottom: 20 }}
                           svg={{ stroke: 'green', strokeWidth: 2 }}
-                        />
-                        <YAxis
-                          style={{ marginLeft: 10, height: 200 }}
-                          data={graphsData[metric.value]}
-                          contentInset={contentInset}
-                          svg={{ fontSize: 10, fill: 'black' }}
-                          formatLabel={(value) => `${value} ${metric.units}`}
-                          numberOfTicks={10}
-                        />
+                        >
+                          <Grid />
+                        </LineChart>
                       </View>
                     </Collapsible>
                   </View>

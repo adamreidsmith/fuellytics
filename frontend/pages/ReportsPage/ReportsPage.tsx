@@ -1,17 +1,9 @@
 import Header from 'components/Header';
 import { useAuthContext } from 'context/AuthContext';
 import React, { useState } from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useTrips } from 'services/trips';
 import { useNavigation } from '@react-navigation/native';
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'utils/date';
 import { FlashList } from '@shopify/flash-list';
 import FiltersPopup from './components/FiltersPopup/FiltersPopup';
@@ -19,33 +11,19 @@ import FiltersPopup from './components/FiltersPopup/FiltersPopup';
 const ReportsPage = () => {
   const { navigate } = useNavigation();
   const { user } = useAuthContext();
-  const { trips, fetchNextPage } = useTrips({ userId: user?.id });
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
-
-  const onChangeStartDate = (event: {
-    event: DateTimePickerEvent;
-    date?: Date;
-  }) => {
-    if (event.date) {
-      setStartDate(event.date);
-    }
-  };
-
-  const onChangeEndDate = (event: {
-    event: DateTimePickerEvent;
-    date?: Date;
-  }) => {
-    if (event.date) {
-      setEndDate(event.date);
-    }
-  };
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const { trips, fetchNextPage } = useTrips({
+    userId: user?.id,
+    startedAt: startDate ? format(startDate, 'YYYY-MM-DD') : undefined,
+    endedAt: endDate ? format(endDate, 'YYYY-MM-DD') : undefined,
+  });
 
   return (
     <View style={styles.container}>
@@ -90,8 +68,8 @@ const ReportsPage = () => {
         startDate={startDate}
         endDate={endDate}
         setModalVisible={setModalVisible}
-        onChangeStartDate={onChangeStartDate}
-        onChangeEndDate={onChangeEndDate}
+        onChangeStartDate={setStartDate}
+        onChangeEndDate={setEndDate}
       />
     </View>
   );

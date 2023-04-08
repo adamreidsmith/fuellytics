@@ -47,15 +47,15 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
         setGraphsData((state) => ({
           fuel: [
             ...state.fuel.slice(-numberOfPoints + 1),
-            message.data.fuelCurrent,
+            parseInt(message.data.fuelCurrent.toFixed(2), 10),
           ],
           speed: [
             ...state.speed.slice(-numberOfPoints + 1),
-            message.data.speed,
+            parseInt(message.data.speed.toFixed(2), 10),
           ],
           co2: [
             ...state.co2.slice(-numberOfPoints + 1),
-            message.data.co2Current,
+            parseInt(message.data.co2Current.toFixed(2), 10),
           ],
         }));
 

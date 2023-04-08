@@ -39,6 +39,8 @@ export interface TripsVariables
     'queryKey' | 'queryFn' | 'getNextPageParam' | 'getPreviousPageParam'
   > {
   userId?: number;
+  startedAt?: string;
+  endedAt?: string;
 }
 
 export type CreateTripPayload = z.infer<typeof TripSchemaPayload>;
