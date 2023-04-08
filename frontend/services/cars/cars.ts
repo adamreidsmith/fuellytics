@@ -14,7 +14,11 @@ export const useCars = ({ search, ...opts }: CarVariables = {}) => {
   const cars =
     data?.pages
       .flatMap((el) => el.results)
-      .map((el) => ({ id: el.id.toString(), title: el.model + ' (' + el.year + ')', item: el })) || [];
+      .map((el) => ({
+        id: el.id.toString(),
+        title: `${el.model} (${el.year})`,
+        item: el,
+      })) || [];
 
   return { cars, status, refetch, fetchNextPage, hasNextPage };
 };

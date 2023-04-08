@@ -5,11 +5,11 @@ import { CarReponse } from './types';
 
 export const getCars: QueryFunction<CarReponse, QueryKey> = async ({
   queryKey,
-  pageParam = 1,
+  pageParam,
 }) => {
   const [_, variables] = queryKey as [unknown, {}];
 
-  return API.get('api/cars', {
-    params: { ...variables, page: pageParam },
+  return API.get(pageParam || 'api/cars', {
+    params: { ...variables },
   }).then(async (result) => CarResponseSchema.parse(result.data));
 };

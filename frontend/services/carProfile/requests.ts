@@ -12,11 +12,11 @@ import {
 export const getCarProfiles: QueryFunction<
   CarProfileReponse,
   QueryKey
-> = async ({ queryKey, pageParam = 1 }) => {
+> = async ({ queryKey, pageParam }) => {
   const [_, variables] = queryKey as [unknown, {}];
 
-  return API.get('api/car_profiles/', {
-    params: { ...variables, page: pageParam },
+  return API.get(pageParam || 'api/car_profiles/', {
+    params: { ...variables },
   }).then(async (result) => CarProfileResponseSchema.parse(result.data));
 };
 

@@ -16,12 +16,12 @@ import {
 
 export const getTrips: QueryFunction<PaginatedTripResponse, QueryKey> = async ({
   queryKey,
-  pageParam = 1,
+  pageParam,
 }) => {
   const [_, variables] = queryKey as [unknown, {}];
 
-  return API.get('api/trips/', {
-    params: { ...variables, page: pageParam },
+  return API.get(pageParam || 'api/trips/', {
+    params: { ...variables },
   }).then(async (result) => PaginatedTripResponseSchema.parse(result.data));
 };
 
