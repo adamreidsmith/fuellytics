@@ -65,7 +65,7 @@ const DetailReportPage = () => {
           </Text>
           <Text>Fuel consumption: {data?.fuelConsumption} mL/s</Text>
           <Text>CO2 emission: {data?.co2Emissions} mL/s</Text>
-          <Text>Average speed: {data?.averageSpeed} m/s</Text>
+          <Text>Average speed: {data?.averageSpeed} km/h</Text>
         </View>
         <View style={styles.button}>
           <Button
