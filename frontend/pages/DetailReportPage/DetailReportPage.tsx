@@ -63,8 +63,8 @@ const DetailReportPage = () => {
             Car used: {data?.carProfile.car.model} - {data?.carProfile.car.make}{' '}
             - {data?.carProfile.car.year}
           </Text>
-          <Text>Fuel consumption: {data?.fuelConsumption} mL/s</Text>
-          <Text>CO2 emission: {data?.co2Emissions} mL/s</Text>
+          <Text>Fuel consumption: {data?.fuelConsumption} L</Text>
+          <Text>CO2 emission: {data?.co2Emissions} L</Text>
           <Text>Average speed: {data?.averageSpeed} km/h</Text>
         </View>
         <View style={styles.button}>
