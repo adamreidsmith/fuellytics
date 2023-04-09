@@ -163,7 +163,7 @@ const MapPage = () => {
   };
 
   const snapPoints = useMemo(
-    () => ['10%', hasStartedRecording ? '70%' : '22.5%'],
+    () => ['10%', hasStartedRecording ? '70%' : '30%'],
     [hasStartedRecording],
   );
 
