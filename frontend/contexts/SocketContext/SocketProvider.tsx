@@ -3,6 +3,7 @@ import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { MessageSchema } from './schema';
 import { SocketContext } from './SocketContext';
 import { GraphsData, SocketContextType } from './types';
+import { frequency } from '../contants';
 
 const numberOfPoints = 60;
 
@@ -62,11 +63,14 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
         setCounters((state) => ({
           ...state,
           samplePoints: state.samplePoints + 1,
-          fuelConsumption: state.fuelConsumption + message.data.fuelCurrent,
-          averageSpeed:
-            (state.averageSpeed + message.data.speed) /
+          // Multiply by timestep and convert to liters
+          fuelConsumption: state.fuelConsumption + message.data.fuelCurrent * frequency / 1000000,
+          // Update the moving average
+          averageSpeed: 
+            state.averageSpeed + message.data.speed * state.samplePoints / 
             (state.samplePoints + 1),
-          co2Emissions: state.co2Emissions + message.data.co2Current,
+          // Multiply by timestep and convert to liters
+          co2Emissions: state.co2Emissions + message.data.co2Current * frequency / 1000000,
         }));
       }
     };

@@ -45,10 +45,10 @@ const SummaryPage = () => {
               {data?.carProfile.car.make}
             </Text>
             <Text style={styles.text}>
-              Fuel consumption: {data?.fuelConsumption} mL/s
+              Fuel consumption: {data?.fuelConsumption} L
             </Text>
             <Text style={styles.text}>
-              CO2 emission: {data?.co2Emissions} mL/s
+              CO2 emission: {data?.co2Emissions} L
             </Text>
             <Text style={styles.text}>
               Average speed: {data?.averageSpeed} km/h
