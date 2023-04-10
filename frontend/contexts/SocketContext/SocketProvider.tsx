@@ -48,15 +48,15 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
         setGraphsData((state) => ({
           fuel: [
             ...state.fuel.slice(-numberOfPoints + 1),
-            parseInt(message.data.fuelCurrent.toFixed(2), 10),
+            parseFloat(message.data.fuelCurrent.toFixed(2)),
           ],
           speed: [
             ...state.speed.slice(-numberOfPoints + 1),
-            parseInt(message.data.speed.toFixed(2), 10),
+            parseFloat(message.data.speed.toFixed(2)),
           ],
           co2: [
             ...state.co2.slice(-numberOfPoints + 1),
-            parseInt(message.data.co2Current.toFixed(2), 10),
+            parseFloat(message.data.co2Current.toFixed(2)),
           ],
         }));
 
@@ -69,7 +69,7 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
             (message.data.fuelCurrent * frequency) / 1000000,
           // Update the moving average
           averageSpeed:
-            (state.averageSpeed * state.samplePoints + message.data.speed) / 
+            (state.averageSpeed * state.samplePoints + message.data.speed) /
             (state.samplePoints + 1),
           // Multiply by timestep and convert to liters
           co2Emissions:
