@@ -69,9 +69,8 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
             (message.data.fuelCurrent * frequency) / 1000000,
           // Update the moving average
           averageSpeed:
-            state.averageSpeed +
-            (message.data.speed * state.samplePoints) /
-              (state.samplePoints + 1),
+            (state.averageSpeed * state.samplePoints + message.data.speed) / 
+            (state.samplePoints + 1),
           // Multiply by timestep and convert to liters
           co2Emissions:
             state.co2Emissions +
