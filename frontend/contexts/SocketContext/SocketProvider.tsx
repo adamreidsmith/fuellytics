@@ -64,13 +64,18 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
           ...state,
           samplePoints: state.samplePoints + 1,
           // Multiply by timestep and convert to liters
-          fuelConsumption: state.fuelConsumption + message.data.fuelCurrent * frequency / 1000000,
+          fuelConsumption:
+            state.fuelConsumption +
+            (message.data.fuelCurrent * frequency) / 1000000,
           // Update the moving average
-          averageSpeed: 
-            state.averageSpeed + message.data.speed * state.samplePoints / 
-            (state.samplePoints + 1),
+          averageSpeed:
+            state.averageSpeed +
+            (message.data.speed * state.samplePoints) /
+              (state.samplePoints + 1),
           // Multiply by timestep and convert to liters
-          co2Emissions: state.co2Emissions + message.data.co2Current * frequency / 1000000,
+          co2Emissions:
+            state.co2Emissions +
+            (message.data.co2Current * frequency) / 1000000,
         }));
       }
     };
