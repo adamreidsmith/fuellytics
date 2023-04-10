@@ -40,7 +40,7 @@ export const TripSchemaPayload = TripSchema.extend({
   .omit({ carProfile: true, id: true })
   .transform(({ fuelConsumption, co2Emissions, averageSpeed, ...rest }) => ({
     ...rest,
-    fuelConsumption: parseInt(fuelConsumption.toFixed(5), 10),
-    co2Emissions: parseInt(co2Emissions.toFixed(5), 10),
-    averageSpeed: parseInt(averageSpeed.toFixed(5), 10),
+    fuelConsumption: parseFloat(fuelConsumption.toFixed(2)),
+    co2Emissions: parseFloat(co2Emissions.toFixed(2)),
+    averageSpeed: parseFloat(averageSpeed.toFixed(2)),
   }));
