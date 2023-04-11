@@ -12,3 +12,12 @@ export type FormattedCar = {
     imageUrl: string | null;
   };
 };
+
+export type FormData = {
+  make: string;
+  model: string;
+  displacement: string;
+  year: string;
+  isSupercharged: boolean;
+  drag: string;
+};

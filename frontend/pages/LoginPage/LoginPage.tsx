@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, TextInput, Button, StyleSheet, Text, Image } from 'react-native';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  Image,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 import { useCSRFToken } from 'services/authentication';
@@ -34,63 +43,69 @@ const LoginForm = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.altLogoContainer}>
-        <Image
-          source={require('../../assets/logos/fuellytics-high-resolution-logo-black-red-on-transparent-background.png')}
-          style={styles.altLogo}
-        />
-      </View>
-      <Controller
-        control={control}
-        name="username"
-        rules={{ required: { value: true, message: 'This field is required' } }}
-        defaultValue=""
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            style={styles.input}
-            onChangeText={onChange}
-            value={value}
-            placeholder="Username"
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <View style={styles.altLogoContainer}>
+          <Image
+            source={require('../../assets/logos/fuellytics-high-resolution-logo-black-red-on-transparent-background.png')}
+            style={styles.altLogo}
           />
-        )}
-      />
-      {errors.username?.message && (
-        <Text style={styles.error}>{errors.username?.message}</Text>
-      )}
-      <Controller
-        control={control}
-        name="password"
-        rules={{ required: { value: true, message: 'This field is required' } }}
-        defaultValue=""
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            style={styles.input}
-            onChangeText={onChange}
-            value={value}
-            placeholder="Password"
-            secureTextEntry
-          />
-        )}
-      />
-      {errors.password?.message && (
-        <Text style={styles.error}>{errors.password?.message}</Text>
-      )}
-      <View style={styles.registerTextContainer}>
-        <Text style={styles.registerText}>Do not have an account yet? </Text>
-        <Text
-          style={[styles.registerText, styles.registerButton]}
-          onPress={() => {
-            navigate('RegisterPage' as never, {} as never);
-            clearErrors();
-            reset();
+        </View>
+        <Controller
+          control={control}
+          name="username"
+          rules={{
+            required: { value: true, message: 'This field is required' },
           }}
-        >
-          Register
-        </Text>
+          defaultValue=""
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Username"
+            />
+          )}
+        />
+        {errors.username?.message && (
+          <Text style={styles.error}>{errors.username?.message}</Text>
+        )}
+        <Controller
+          control={control}
+          name="password"
+          rules={{
+            required: { value: true, message: 'This field is required' },
+          }}
+          defaultValue=""
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              style={styles.input}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Password"
+              secureTextEntry
+            />
+          )}
+        />
+        {errors.password?.message && (
+          <Text style={styles.error}>{errors.password?.message}</Text>
+        )}
+        <View style={styles.registerTextContainer}>
+          <Text style={styles.registerText}>Do not have an account yet? </Text>
+          <Text
+            style={[styles.registerText, styles.registerButton]}
+            onPress={() => {
+              navigate('RegisterPage' as never, {} as never);
+              clearErrors();
+              reset();
+            }}
+          >
+            Register
+          </Text>
+        </View>
+        <Button title="Login" onPress={handleSubmit(onSubmit)} />
       </View>
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
-import { useInfiniteQuery } from 'react-query';
-import { getCars } from './requests';
-import { CarReponse, CarVariables } from './types';
+import { useInfiniteQuery, useMutation } from 'react-query';
+import { createCar, getCars } from './requests';
+import { CarReponse, CarVariables, CreateCarVariables } from './types';
 
 export const useCars = ({ search, ...opts }: CarVariables = {}) => {
   const { data, status, refetch, fetchNextPage, hasNextPage } =
@@ -22,3 +22,6 @@ export const useCars = ({ search, ...opts }: CarVariables = {}) => {
 
   return { cars, status, refetch, fetchNextPage, hasNextPage };
 };
+
+export const useCreateCar = ({ ...rest }: CreateCarVariables = {}) =>
+  useMutation('createCar', createCar, { ...rest });

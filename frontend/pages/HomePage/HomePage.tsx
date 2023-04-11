@@ -15,18 +15,14 @@ import CarProfilePopup from './components/CarProfilePopup';
 const HomePage = () => {
   useCSRFToken();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { navigate } = useNavigation();
 
   const { logout, user } = useAuthContext();
-  const [carModel, setCarModel] = useState(undefined);
   const { carsProfiles, fetchNextPage, status, refetch } = useCarProfiles({
     userId: user?.id,
   });
 
   const { mutateAsync: deleteCarProfile } = useDeleteCarProfile({
-    onSuccess: (response) => {
-      setModalVisible(false);
-      navigate('HomePage' as never, {} as never);
+    onSuccess: () => {
       refetch();
     },
   });

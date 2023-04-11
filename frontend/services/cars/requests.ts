@@ -1,7 +1,7 @@
-import { QueryFunction, QueryKey } from 'react-query';
+import { MutationFunction, QueryFunction, QueryKey } from 'react-query';
 import API from 'services/api';
-import { CarResponseSchema } from './schema';
-import { CarReponse } from './types';
+import { CarResponseSchema, CreateCartPayloadSchema } from './schema';
+import { CarReponse, CreateCarResponse, CreateCartPayload } from './types';
 
 export const getCars: QueryFunction<CarReponse, QueryKey> = async ({
   queryKey,
@@ -13,3 +13,11 @@ export const getCars: QueryFunction<CarReponse, QueryKey> = async ({
     params: { ...variables },
   }).then(async (result) => CarResponseSchema.parse(result.data));
 };
+
+export const createCar: MutationFunction<
+  CreateCarResponse,
+  CreateCartPayload
+> = async (payload) =>
+  API.post('api/cars/', CreateCartPayloadSchema.parse(payload)).then(
+    (result) => result.data,
+  );

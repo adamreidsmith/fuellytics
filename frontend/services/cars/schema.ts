@@ -17,3 +17,18 @@ export const CarResponseSchema = z.object({
   previous: z.string().nullable(),
   results: CarSchema.array(),
 });
+
+export const CreateCarSchema = z.object({
+  success: z.boolean(),
+  data: CarSchema,
+});
+
+export const CreateCartPayloadSchema = z.object({
+  make: z.string(),
+  model: z.string(),
+  displacement: z.string(),
+  year: z.string(),
+  isSupercharged: z.boolean(),
+  drag: z.string(),
+  imageUrl: z.string().optional(),
+});

@@ -1,7 +1,15 @@
 import { AxiosError } from 'axios';
-import { QueryKey, UseInfiniteQueryOptions } from 'react-query';
+import {
+  QueryKey,
+  UseInfiniteQueryOptions,
+  UseMutationOptions,
+} from 'react-query';
 import { z } from 'zod';
-import { CarResponseSchema } from './schema';
+import {
+  CarResponseSchema,
+  CreateCarSchema,
+  CreateCartPayloadSchema,
+} from './schema';
 
 export type CarReponse = z.infer<typeof CarResponseSchema>;
 
@@ -18,3 +26,18 @@ export interface CarVariables
   > {
   search?: string;
 }
+
+export type CreateCarResponse = z.infer<typeof CreateCarSchema>;
+
+export type CreateCartPayload = z.infer<typeof CreateCartPayloadSchema>;
+
+export interface CreateCarVariables
+  extends Omit<
+    UseMutationOptions<
+      CreateCarResponse,
+      AxiosError,
+      CreateCartPayload,
+      unknown
+    >,
+    'mutationFn' | 'mutationKey'
+  > {}
