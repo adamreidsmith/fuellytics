@@ -35,8 +35,8 @@
 	
 	{\large\textit{Group 2}}\\
 	Adam \textsc{Smith} (30031453)\\
-	Chavisa \textsc{Sornsakul} (123456789)\\
-	Wai Ka \textsc{Wong Situ} (123456789)\\
+	Chavisa \textsc{Sornsakul} (30193209)\\
+	Wai Ka \textsc{Wong Situ} (30184219)\\
 	
 	\vfill\vfill\vfill
 	{\large \today}
@@ -110,10 +110,14 @@ If the user is not yet registered, they can select the register button to be bro
 
 On the home page the user is greeted with a welcome message, and the list of vehicles that the user has added to their account is displayed.  If there are no vehicles associated with the user's account, the message ``No vehicles registered.'' is displayed.  A logout button is available in the top left corner of the page.
 
-The user can easily remove vehicles by selecting the `x' icon next to the vehicle name. Vehicles can be added by selecting the ``Add new vehicle'' button above the navigation bar.  This brings up a popup where the user can search for their vehicle by typing in the search field and then create the vehicle profile by selecting the ``Create'' button.  ******************Fuellytics has data for over 22,000 unique vehicles, however, if the user's vehicle is not available, the user can manually enter their vehicle's credentials after selecting the ``Enter my own vehicle'' button.  The credentials required by Fuellytics are the engine displacement of the vehicle, whether or not the vehicle is supercharged or turbocharged, and, optionally, the vehicle's mass and the product of the drag coefficient and frontal area. [NOT IMPLEMENTED YET]******************
+The user can easily remove vehicles by selecting the `x' icon next to the vehicle name. Vehicles can be added by selecting the ``Add new vehicle'' button above the navigation bar.  This brings up a popup (Figure \ref*{fig:new-vehicle}) where the user can search for their vehicle by typing in the search field, and then create the vehicle profile by selecting the ``Create'' button.  Fuellytics has data for over 22,000 unique vehicles, however, if the user's vehicle is not available, the user can manually enter their vehicle's credentials after selecting the ``Enter my own vehicle'' button.  The credentials required by Fuellytics are the make, model, year, engine displacement, and whether or not the vehicle is supercharged.
 \begin{figure}[H]
-\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
-\caption{\label{fig:homepage} The Fuellytics home page with (left) and without (middle) vehicles added to the user's account. The right image shows the popup for adding a new vehicle.}
+\centerline{\includegraphics[width=11cm]{img/homepage.png}}
+\caption{\label{fig:homepage} The Fuellytics home page with (left) and without (middle) vehicles added to the user's account.}
+\end{figure}
+\begin{figure}[H]
+\centerline{\includegraphics[width=11cm]{img/add-new-vehicle.png}}
+\caption{\label{fig:new-vehicle} Popup to add a new vehicle from the Fuellytics database (left), and the window to add a custom vehicle (right).}
 \end{figure}
 
 A navigation bar at the bottom of the page allows for easy navigation throughout the Fuellytics application.
@@ -126,20 +130,20 @@ Selecting the ``Start recording'' button will begin a trip recording.  Figure \r
 \caption{\label{fig:mappage} The map page where the user can begin a trip recording.}
 \end{figure}
 \begin{figure}[H]
-\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
-\caption{\label{fig:recording} REPLACE FIGURE WITH IMAGES OF RECORDING.}
+\centerline{\includegraphics[width=20cm]{img/recording.png}}
+\caption{\label{fig:recording} The screens displayed during a trip recording.  From left to right: a map showing the vehicle's location and route, and real-time plots of the CO$_2$ emissions, fuel consumption, and velocity.}
 \end{figure}
 
 Once the user arrives at their location, the ``End Recording \& Save'' button will finalize the trip recording and save it.  As shown in Figure \ref*{fig:confirmation}, a confirmation page will appear with a summary of the trip including the elapsed time, the total gas consumption, and the total CO$_2$ emissions. Selecting the ``Back'' button brings the user back to the map page.
 \begin{figure}[H]
-\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
-\caption{\label{fig:confirmation} REPLACE FIGURE WITH IMAGE OF CONFIRMATION PAGE.}
+\centerline{\includegraphics[width=5.5cm]{img/confirmation.png}}
+\caption{\label{fig:confirmation} Confirmation page showing a summary of the trip.}
 \end{figure}
 
 Summaries of the users trips are available on the reports page, shown in Figure \ref*{fig:reports}.  Here, all of the users past trips appear in a scrollable list. The calendar icon above the trip list opens a date range selector widget to filter the trip list within a specified date range. Selecting a trip reveals the trip information page to show further information about the trip including the start and end times, the vehicle used, the total CO$_2$ emissions, the total fuel consumption, and the average speed.  An interactive map is also displayed showing the vehicle route. The user can return to the trips page by selecting the ``Back'' button.
 \begin{figure}[H]
-\centerline{\includegraphics[width=16.5cm]{img/homepage.png}}
-\caption{\label{fig:reports} REPLACE FIGURE WITH IMAGES OF REPORTS PAGE.}
+\centerline{\includegraphics[width=16.5cm]{img/reports.png}}
+\caption{\label{fig:reports} The reports page showing all previously logged trips (left), the date filter widget to filter past trips (middle), and the trip information page showing detailed information and a map of the trip.}
 \end{figure}
 
 
