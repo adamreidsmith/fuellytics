@@ -1,5 +1,12 @@
 import { WEBSOCKET_URL } from '@env';
-import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { MessageSchema } from './schema';
 import { SocketContext } from './SocketContext';
 import { GraphsData, SocketContextType } from './types';
@@ -23,7 +30,7 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
     co2Emissions: 0,
   });
 
-  useEffect(() => {
+  const connect = useCallback(() => {
     const newSocket = new WebSocket(WEBSOCKET_URL);
 
     newSocket.onopen = () => {
@@ -87,12 +94,17 @@ export const SocketProvider: FC<PropsWithChildren> = ({ children }) => {
     newSocket.onclose = () => {
       setSocket(null);
       setIsConnected(false);
+      connect();
     };
 
     return () => {
       newSocket.close();
     };
   }, []);
+
+  useEffect(() => {
+    connect();
+  }, [connect]);
 
   const value: SocketContextType = useMemo(
     () => ({
