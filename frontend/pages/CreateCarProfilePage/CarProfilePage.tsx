@@ -48,7 +48,7 @@ const CarProfile = () => {
       displacement: '',
       year: '',
       isSupercharged: false,
-      drag: '',
+      drag: '0',
     },
   });
 
@@ -165,28 +165,6 @@ const CarProfile = () => {
                   color={value ? '#434343' : undefined}
                 />
                 <Text>Is Supercharged?</Text>
-              </View>
-            )}
-          />
-          <Controller
-            control={control}
-            name="drag"
-            rules={{
-              required: { value: true, message: 'This field is required' },
-            }}
-            defaultValue=""
-            render={({ field: { onChange, value }, formState: { errors } }) => (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Drag"
-                  value={value}
-                  onChangeText={onChange}
-                  keyboardType="numeric"
-                />
-                {errors.drag?.message && (
-                  <Text style={styles.formErrors}>{errors.drag?.message}</Text>
-                )}
               </View>
             )}
           />
