@@ -10,6 +10,9 @@
 \usepackage{esvect}
 \usepackage{url}
 \usepackage[section]{placeins}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{array}
 
 %\setcounter{secnumdepth}{0}
 \onehalfspacing
@@ -88,6 +91,112 @@ Our innovative application, \textit{Fuellytics}, is a cutting-edge smartphone ap
 The application not only displays emissions and fuel consumption information, but also tracks their current location and displays their trip on an interactive map.  Furthermore, the user can view and analyze fuel consumption and CO$_2$ emissions from previously logged trips, and see their previous routes on a map. These statistics allow users make educated decisions about their driving and transportation habits and adjust their driving style to improve fuel economy and save money.  Moreover, they highlight the environmental impact of their vehicle use to promote environmentally friendly transportation choices.
 
 \section{Architecture}
+
+\begin{table}[!htbp]
+\scriptsize
+\renewcommand{\arraystretch}{1.275}
+\centerline{\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{App} &
+  \textbf{Description} &
+  \textbf{Method} &
+  \textbf{Endpoint} &
+  \textbf{Parameters} &
+  \textbf{Body} \\ \hline
+\multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\\User \end{tabular}} &
+  \multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\\Base Django user\\ model.\end{tabular}} &
+  POST &
+  /api/accounts/login &
+  - &
+  \begin{tabular}[c]{@{}c@{}}username: string\\ password: string\end{tabular} \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/accounts/register &
+  - &
+  \begin{tabular}[c]{@{}c@{}}username: string\\ password: string\\ email: string\end{tabular} \\ \cline{3-6} 
+ &
+   &
+  DELETE &
+  /api/accounts/logout &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/accounts/current\_user &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/accounts/csrf\_cookie &
+  - &
+  - \\ \hline
+User Profile &
+  \begin{tabular}[c]{@{}c@{}}Include extra fields from\\ the user. The User Profile\\ app is connected to User\\ via a one-to-one\\ relationship.\end{tabular} &
+  GET &
+  /api/accounts/users/:id &
+  - &
+  - \\ \hline
+\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\\ \\ \\Cars \end{tabular}} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\\ \\ Include the list of cars\\ that the user can select\\ from.\end{tabular}} &
+  GET &
+  /api/cars/ &
+  \begin{tabular}[c]{@{}c@{}}search?: string\\ make?: string\\ model?: string\\ displacement?: number\\ year?: number\\ is\_supercharged?: boolean\end{tabular} &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/cars/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/cars/ &
+  - &
+  \begin{tabular}[c]{@{}c@{}}make: string\\ model: string\\ displacement: string\\ year: number\\ is\_supercharged: boolean\\ drag: number\end{tabular} \\ \hline
+\multirow{3}{*}{Car Profile} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Relates the list of cars\\ owned by the user to\\ the user.\end{tabular}} &
+  GET &
+  /api/car\_profiles/ &
+  user\_id?: number &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/car\_profiles/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/car\_profiles/ &
+  - &
+  car\_id: number \\ \hline
+\multirow{3}{*}{\begin{tabular}{@{}c@{}}\\ \\ \\ \\ \\ \\ \\ Trips\end{tabular}} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\\ \\ \\ \\ \\\ \\ List of trips that the\\ user has recorded.\end{tabular}} &
+  GET &
+  /api/trips/ &
+  \begin{tabular}[c]{@{}c@{}}user\_id?: number\\ started\_at?: Date\\ ended\_at?: Date\end{tabular} &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/trips/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/trips/ &
+  - &
+  \begin{tabular}[c]{@{}c@{}}started\_at: Date\\ ended\_at: Date\\ route\_coordinates: \{\\ latitude: number\\ longitude: number\\ speed: number\\ heading: number\\ altitude: number\\ accuracy: number\\ altitude\_accuracy: number\\ \}{[}{]}\\ fuel\_consumption: number\\ average\_speed: number\\ co2\_emissions: number\end{tabular} \\ \hline
+\end{tabular}}
+\caption{\label{table:backend-architecture}This be a table.}
+\end{table}
+
 
 \subsection{Design rationale}
 
