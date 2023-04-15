@@ -13,6 +13,7 @@
 \usepackage{multirow}
 \usepackage{amsmath}
 \usepackage{array}
+\usepackage{adjustbox}
 
 %\setcounter{secnumdepth}{0}
 \onehalfspacing
@@ -92,17 +93,21 @@ The application not only displays emissions and fuel consumption information, bu
 
 \section{Architecture}
 
-\begin{table}[!htbp]
+
+\begin{table}[!t]
 \scriptsize
 \renewcommand{\arraystretch}{1.275}
+\vspace*{-1.5cm}
 \centerline{\begin{tabular}{|c|c|c|c|c|c|}
 \hline
-\textbf{App} &
-  \textbf{Description} &
-  \textbf{Method} &
-  \textbf{Endpoint} &
-  \textbf{Parameters} &
-  \textbf{Body} \\ \hline
+\begin{adjustbox}{padding=1em}
+\textbf{\small App}
+\end{adjustbox} &
+  \textbf{\small Description} &
+  \textbf{\small Method} &
+  \textbf{\small Endpoint} &
+  \textbf{\small Parameters} &
+  \textbf{\small Body} \\ \hline
 \multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\\User \end{tabular}} &
   \multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\\Base Django user\\ model.\end{tabular}} &
   POST &
@@ -194,7 +199,7 @@ User Profile &
   - &
   \begin{tabular}[c]{@{}c@{}}started\_at: Date\\ ended\_at: Date\\ route\_coordinates: \{\\ latitude: number\\ longitude: number\\ speed: number\\ heading: number\\ altitude: number\\ accuracy: number\\ altitude\_accuracy: number\\ \}{[}{]}\\ fuel\_consumption: number\\ average\_speed: number\\ co2\_emissions: number\end{tabular} \\ \hline
 \end{tabular}}
-\caption{\label{table:backend-architecture}This be a table.}
+\caption{\label{table:backend-architecture}Dis be a table.}
 \end{table}
 
 
