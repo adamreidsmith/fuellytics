@@ -10,6 +10,10 @@
 \usepackage{esvect}
 \usepackage{url}
 \usepackage[section]{placeins}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{adjustbox}
 
 %\setcounter{secnumdepth}{0}
 \onehalfspacing
@@ -50,11 +54,13 @@ Next to oil and gas, the transportation sector is the second largest emitter of 
 
 Monitoring fuel consumption is vital to understand the efficiency of a vehicle and its impact on the environment.  This data can provide valuable insights into the effects of driving style, conditions, and vehicle type on a vehicle's emissions, and incentivize the driver to adapt their driving style to reduce total greenhouse gas emissions and fuel costs.  
 
-Our innovative new smartphone application, \textit{Fuellytics}, utilizes the smartphone's inertial and GPS sensors to measure fuel consumption and emissions of various greenhouse gases in real-time.  Fuellytics helps drivers track their fuel costs by monitoring velocity and acceleration while driving, and displaying the current and total fuel use for the current trip on an interactive frontend.  Moreover, the user is able to track their routes, and analyze the emissions of various greenhouse gases including carbon dioxide, nitrous oxides, particulate matter, and unburned hydrocarbons on current and previous routes.
+Our innovative new smartphone application, \textit{Fuellytics}, utilizes the smartphone's inertial, magnetic, and GNSS sensors to measure fuel consumption and emissions of various greenhouse gases in real-time.  Fuellytics helps drivers track their fuel costs by monitoring velocity and acceleration while driving, and displaying the current and total fuel use for the current trip on an interactive frontend.  Moreover, the user is able to track their routes, and analyze their CO$_2$ emissions on current and previous routes.
 
 The dynamic frontend of Fuellytics is built using the JavaScript library React-Native \reflabel{reactnative} to enable simplified development and cross-platform compatibility.  To alllow for easy user authentication and provide versatile development tools, the backend is written with the Python library Django \reflabel{django}.
 
-Explain a little more about architecture here...
+Fuellytics uses various AWS \reflabel{aws} services, including an elastic load balancer, sticky sessions, EC2 instances, security groups, auto-scaling groups, AWS RDS, S3 bucket, and Lambda serverless function to provide a scalable and reliable platform. The application uses the WebSocket protocol to connect to the Lambda serverless function for real-time data processing using sensor fusion techniques. Cloudwatch is used for monitoring and logging every action or error in run-time as well as build-time. The application is created to meet the needs of its users while emphasizing reliability and scalability.
+
+
 
 Mention results and briefly mentions lessons learned here...
 
@@ -89,69 +95,204 @@ The application not only displays emissions and fuel consumption information, bu
 
 \section{Architecture}
 
-\subsection{Design rationale}
+\subsection{Architecture description and design rationale}
 
-\subsection{Architecture description}
+Our application is built using several AWS services that work together to provide a scalable and reliable platform. The main entry point is the elastic load balancer, responsible for balancing and distributing user traffic evenly. To ensure the user doesn't lose their session, sticky sessions are applied here. EC2 instances are connected to the load balancer via security groups, which act as firewalls to prevent access from entry points other than the load balancer.
 
-\subsection{API}
+To handle scaling based on usage or pre-defined metrics such as CPU performance or scheduled events, the EC2 instances are contained within an auto-scaling group. AWS RDS, specifically Postgresql DB, is used to store critical data for the application. Alternative choices include Amazon Aurora and DynamoDB (NoSQL). Static files such as profile and car images are stored in an S3 bucket, which acts as a CDN and is connected to the EC2 instances. CloudFront implementation can be used to further scale for high availability.
 
-\subsection{Sequence Diagram}
+When the user starts recording, it connects to a lambda serverless function via API Gateway using the WebSocket protocol. The client's device streams accelerometer, gyroscope, magnetometer, and GPS data to the lambda function, which processes the data using sensor fusion and the Madgwick AHRS algorithm \reflabel{madgwick} to return real-time metrics shown directly to the user. It's worth noting that the limitation of the serverless function comes from cold starts, meaning the initial connection may be slower than subsequent ones.
 
-\subsection{Data models and JSON encodings}
+Once the user completes a trip, the client sends a POST request with all the client-stored data to the backend. For monitoring, we are employing Cloudwatch, which logs every action or error in run time as well as build time. With this combination of services, we have created a scalable, reliable, and efficient application that meets the needs of our users.
+
+Figures \ref{fig:architecture} and \ref{fig:frontend} and Table \ref{table:backend} show diagrammatic representations of the architecture of the Fuellytics application.  The technologies used to develop Fuellytics are show in Figure \ref{fig:tech-stack}.
+
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=19cm]{img/architecture/architecture-aws.png}}
+\caption{\label{fig:architecture}Fuellytics applies the classic three-tier architecture (Client, Server, and DB) most commonly used among simple applications. The design is widely accepted by current industry standards due to its low complexity and high scalability potential.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=17cm]{img/architecture/Fuellytics-Frontend Architecture.png}}
+\caption{\label{fig:frontend}The frontend architecture consists of 4 main sections, authentication pages, home pages, map pages, and summary pages. Each section contains its own logic flow and subpages.}
+\end{figure}
+
+\begin{table}[!t]
+\scriptsize
+\renewcommand{\arraystretch}{1.275}
+\vspace*{-1.5cm}
+\centerline{\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\begin{adjustbox}{padding=1em}
+\textbf{\small App}
+\end{adjustbox} &
+  \textbf{\small Description} &
+  \textbf{\small Method} &
+  \textbf{\small Endpoint} &
+  \textbf{\small Parameters} &
+  \textbf{\small Body} \\ \hline
+\multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\vspace*{.25cm}\\User \end{tabular}} &
+  \multirow{5}{*}{\begin{tabular}[c]{@{}c@{}}\vspace*{.25cm} \\Base Django user\\ model.\end{tabular}} &
+  POST &
+  /api/accounts/login &
+  - &
+  \begin{tabular}[c]{@{}c@{}}username: string\\ password: string\end{tabular} \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/accounts/register &
+  - &
+  \begin{tabular}[c]{@{}c@{}}username: string\\ password: string\\ email: string\end{tabular} \\ \cline{3-6} 
+ &
+   &
+  DELETE &
+  /api/accounts/logout &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/accounts/current\_user &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/accounts/csrf\_cookie &
+  - &
+  - \\ \hline
+User Profile &
+  \begin{tabular}[c]{@{}c@{}}Include extra fields from\\ the user. The User Profile\\ app is connected to User\\ via a one-to-one\\ relationship.\end{tabular} &
+  GET &
+  /api/accounts/users/:id &
+  - &
+  - \\ \hline
+\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\vspace*{1.05cm} \\Cars \end{tabular}} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\vspace*{.65cm} \\ Include the list of cars\\ that the user can select\\ from.\end{tabular}} &
+  GET &
+  /api/cars/ &
+  \begin{tabular}[c]{@{}c@{}}search?: string\\ make?: string\\ model?: string\\ displacement?: number\\ year?: number\\ is\_supercharged?: boolean\end{tabular} &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/cars/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/cars/ &
+  - &
+  \begin{tabular}[c]{@{}c@{}}make: string\\ model: string\\ displacement: string\\ year: number\\ is\_supercharged: boolean\\ drag: number\end{tabular} \\ \hline
+\multirow{3}{*}{Car Profile} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Relates the list of cars\\ owned by the user to\\ the user.\end{tabular}} &
+  GET &
+  /api/car\_profiles/ &
+  user\_id?: number &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/car\_profiles/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/car\_profiles/ &
+  - &
+  car\_id: number \\ \hline
+\multirow{3}{*}{\begin{tabular}{@{}c@{}}\vspace*{2.5cm} \\Trips\end{tabular}} &
+  \multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}\vspace*{2.25cm}\\List of trips that the user\\has recorded.\end{tabular}} &
+  GET &
+  /api/trips/ &
+  \begin{tabular}[c]{@{}c@{}}user\_id?: number\\ started\_at?: Date\\ ended\_at?: Date\end{tabular} &
+  - \\ \cline{3-6} 
+ &
+   &
+  GET &
+  /api/trips/:id &
+  - &
+  - \\ \cline{3-6} 
+ &
+   &
+  POST &
+  /api/trips/ &
+  - &
+  \begin{tabular}[c]{@{}c@{}}started\_at: Date\\ ended\_at: Date\\ route\_coordinates: \{\\ latitude: number\\ longitude: number\\ speed: number\\ heading: number\\ altitude: number\\ accuracy: number\\ altitude\_accuracy: number\\ \}[\hspace*{.06cm}]\\ fuel\_consumption: number\\ average\_speed: number\\ co2\_emissions: number\end{tabular} \\ \hline
+\end{tabular}}
+\caption{\label{table:backend}The backend architecture and API documentation for the Fuellytics application.}
+\end{table}
+
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=9cm]{img/architecture/Fuellytics-Frontend Tech stack.png}}
+\caption{\label{fig:tech-stack}The frontend tech stack employed in the Fuellytics application.}
+\end{figure}
+
+\FloatBarrier 
+\subsection{Continuous integration/continuous delivery architecture}
+Fuellytics is a multi-repo project, however, the CI/CD architecture, shown in Figure \ref{fig:cicd}, follows the same workflow delivery pattern in all three repositories. It starts with the developer creating a new branch from the protected master branch. When code changes are ready, they are collected into a pull request and the review process starts. Once all checks are cleared, the pull request is merged into the master branch and an automated-deployment pipeline builds and deploys the project into its respective infrastructure.
+
+\begin{figure}[!htb]
+\centerline{\includegraphics[width=15cm]{img/architecture/Fuellytics-CI_CD Workflow.png}}
+\caption{\label{fig:cicd}CI/CD architecture of the Fuellytics application.}
+\end{figure}
 
 \section{Results}
-Upon opening Fuellytics, the user is presented with a login page (Figure \ref*{fig:login-register}) showing the Fuellytics logo and fields for the user to enter their credentials, as well as a login button. If the user attempts to login with invalid or missing credentials, the login attempt will fail.  A successful login will bring the user to the home page of the application.
+Upon opening Fuellytics, the user is presented with a login page (Figure \ref{fig:login-register}) showing the Fuellytics logo and fields for the user to enter their credentials, as well as a login button. If the user attempts to login with invalid or missing credentials, the login attempt will fail.  A successful login will bring the user to the home page of the application.
 
-If the user is not yet registered, they can select the register button to be brought to the registration page shown in Figure \ref*{fig:login-register}.  To register, the user must provide a username (containing at most 150 characters) and email (with valid email formatting) which are not already associated with an account, and a password with a minimum length of 8 characters.  If these requirements are not met, the registration will fail. Upon successful registration, the user will automatically be logged in and brought to the application home page, shown in Figure \ref*{fig:homepage}.
+If the user is not yet registered, they can select the register button to be brought to the registration page shown in Figure \ref{fig:login-register}.  To register, the user must provide a username (containing at most 150 characters) and email (with valid email formatting) which are not already associated with an account, and a password with a minimum length of 8 characters.  If these requirements are not met, the registration will fail. Upon successful registration, the user will automatically be logged in and brought to the application home page, shown in Figure \ref{fig:homepage}.
 \begin{figure}[H]
 \centerline{\includegraphics[width=11cm]{img/login-register.png}}
-\caption{\label{fig:login-register} Login page (left) and registration page (right) of the Fuellytics application.}
+\caption{\label{fig:login-register}Login page (left) and registration page (right) of the Fuellytics application.}
 \end{figure}
 
 On the home page the user is greeted with a welcome message, and the list of vehicles that the user has added to their account is displayed.  If there are no vehicles associated with the user's account, the message ``No vehicles registered.'' is displayed.  A logout button is available in the top left corner of the page.
 
-The user can easily remove vehicles by selecting the `x' icon next to the vehicle name. Vehicles can be added by selecting the ``Add new vehicle'' button above the navigation bar.  This brings up a popup (Figure \ref*{fig:new-vehicle}) where the user can search for their vehicle by typing in the search field, and then create the vehicle profile by selecting the ``Create'' button.  Fuellytics has data for over 22,000 unique vehicles, however, if the user's vehicle is not available, the user can manually enter their vehicle's credentials after selecting the ``Enter my own vehicle'' button.  The credentials required by Fuellytics are the make, model, year, engine displacement, and whether or not the vehicle is supercharged.
+The user can easily remove vehicles by selecting the `x' icon next to the vehicle name. Vehicles can be added by selecting the ``Add new vehicle'' button above the navigation bar.  This brings up a popup (Figure \ref{fig:new-vehicle}) where the user can search for their vehicle by typing in the search field, and then create the vehicle profile by selecting the ``Create'' button.  Fuellytics has data for over 22,000 unique vehicles, however, if the user's vehicle is not available, the user can manually enter their vehicle's credentials after selecting the ``Enter my own vehicle'' button.  The credentials required by Fuellytics are the make, model, year, engine displacement, and whether or not the vehicle is supercharged.
 \begin{figure}[H]
 \centerline{\includegraphics[width=11cm]{img/homepage.png}}
-\caption{\label{fig:homepage} The Fuellytics home page with (left) and without (middle) vehicles added to the user's account.}
+\caption{\label{fig:homepage}The Fuellytics home page with (left) and without (middle) vehicles added to the user's account.}
 \end{figure}
 \begin{figure}[H]
 \centerline{\includegraphics[width=11cm]{img/add-new-vehicle.png}}
-\caption{\label{fig:new-vehicle} Popup to add a new vehicle from the Fuellytics database (left), and the window to add a custom vehicle (right).}
+\caption{\label{fig:new-vehicle}Popup to add a new vehicle from the Fuellytics database (left), and the window to add a custom vehicle (right).}
 \end{figure}
 
 A navigation bar at the bottom of the page allows for easy navigation throughout the Fuellytics application.
 
-The map page, shown in Figure \ref*{fig:mappage}, is where users can begin recording their routes and tracking their fuel consumption and carbon emissions.  The user can select their vehicle from the vehicles associated with their account from the dropdown menu.  Initially, the ``Start recording'' button will be hidden and a ``Connecting...'' message will be displayed.  Once the GPS connection has been established and location data is being received, the ``Start recording'' button will become visible, and it will become clickable once a vehicle is selected from the dropdown.
+The map page, shown in Figure \ref{fig:mappage}, is where users can begin recording their routes and tracking their fuel consumption and carbon emissions.  The user can select their vehicle from the vehicles associated with their account from the dropdown menu.  Initially, the ``Start recording'' button will be hidden and a ``Connecting...'' message will be displayed.  Once the GPS connection has been established and location data is being received, the ``Start recording'' button will become visible, and it will become clickable once a vehicle is selected from the dropdown.
 
-Selecting the ``Start recording'' button will begin a trip recording.  Figure \ref*{fig:recording} shows the screens displayed during a trip recording.  These screens contain an interactive map which tracks the user's location in real-time.  A pin is placed on the map showing the users current location, and their track is shown as a black polyline which updates as they move.  A panel slides up from the bottom of the page to reveal plots of the current CO$_2$ emissions of the vehicle in mL/s, the current fuel consumption in mL/s, and the current vehicle speed in km/h.  These plots dynamically update every second, and show data for the last minute.  At any time, the recording can be paused by selecting the ``Pause Recording'' button, and continued by selecting ``Continue Recording''.  
+Selecting the ``Start recording'' button will begin a trip recording.  Figure \ref{fig:recording} shows the screens displayed during a trip recording.  These screens contain an interactive map which tracks the user's location in real-time.  A pin is placed on the map showing the users current location, and their track is shown as a black polyline which updates as they move.  A panel slides up from the bottom of the page to reveal plots of the current CO$_2$ emissions of the vehicle in mL/s, the current fuel consumption in mL/s, and the current vehicle speed in km/h.  These plots dynamically update every second, and show data for the last minute.  At any time, the recording can be paused by selecting the ``Pause Recording'' button, and continued by selecting ``Continue Recording''.  
 \begin{figure}[!t]
 \centerline{\includegraphics[width=5.5cm]{img/mapinit.png}}
-\caption{\label{fig:mappage} The map page where the user can begin a trip recording.}
+\caption{\label{fig:mappage}The map page where the user can begin a trip recording.}
 \end{figure}
 \begin{figure}[H]
 \centerline{\includegraphics[width=20cm]{img/recording.png}}
-\caption{\label{fig:recording} The screens displayed during a trip recording.  From left to right: a map showing the vehicle's location and route, and real-time plots of the CO$_2$ emissions, fuel consumption, and velocity.}
+\caption{\label{fig:recording}The screens displayed during a trip recording.  From left to right: a map showing the vehicle's location and route, and real-time plots of the CO$_2$ emissions, fuel consumption, and velocity.}
 \end{figure}
 
-Once the user arrives at their location, the ``End Recording \& Save'' button will finalize the trip recording and save it.  As shown in Figure \ref*{fig:confirmation}, a confirmation page will appear with a summary of the trip including the elapsed time, the total gas consumption, and the total CO$_2$ emissions. Selecting the ``Back'' button brings the user back to the map page.
+Once the user arrives at their location, the ``End Recording \& Save'' button will finalize the trip recording and save it.  As shown in Figure \ref{fig:confirmation}, a confirmation page will appear with a summary of the trip including the elapsed time, the total gas consumption, and the total CO$_2$ emissions. Selecting the ``Back'' button brings the user back to the map page.
 \begin{figure}[H]
 \centerline{\includegraphics[width=5.5cm]{img/confirmation.png}}
-\caption{\label{fig:confirmation} Confirmation page showing a summary of the trip.}
+\caption{\label{fig:confirmation}Confirmation page showing a summary of the trip.}
 \end{figure}
 
-Summaries of the users trips are available on the reports page, shown in Figure \ref*{fig:reports}.  Here, all of the users past trips appear in a scrollable list. The calendar icon above the trip list opens a date range selector widget to filter the trip list within a specified date range. Selecting a trip reveals the trip information page to show further information about the trip including the start and end times, the vehicle used, the total CO$_2$ emissions, the total fuel consumption, and the average speed.  An interactive map is also displayed showing the vehicle route. The user can return to the trips page by selecting the ``Back'' button.
+Summaries of the users trips are available on the reports page, shown in Figure \ref{fig:reports}.  Here, all of the users past trips appear in a scrollable list. The calendar icon above the trip list opens a date range selector widget to filter the trip list within a specified date range. Selecting a trip reveals the trip information page to show further information about the trip including the start and end times, the vehicle used, the total CO$_2$ emissions, the total fuel consumption, and the average speed.  An interactive map is also displayed showing the vehicle route. The user can return to the trips page by selecting the ``Back'' button.
 \begin{figure}[H]
 \centerline{\includegraphics[width=16.5cm]{img/reports.png}}
-\caption{\label{fig:reports} The reports page showing all previously logged trips (left), the date filter widget to filter past trips (middle), and the trip information page showing detailed information and a map of the trip.}
+\caption{\label{fig:reports}The reports page showing all previously logged trips (left), the date filter widget to filter past trips (middle), and the trip information page showing detailed information and a map of the trip.}
 \end{figure}
-
 
 \section{Lessons learned}
 
-One of the most challenging technical aspects of this project was the alignment of the smartphone axes with the frame of the vehicle.  This is necessary to be able to extract the speed and acceleration of the vehicle and enable the fuel consumption calculation.  Since the smartphone is not fixed in the vehicle and can rotate arbitrarily at any time, the orientation parameters describing the relative vehicle-smartphone orientation must be constantly updated and corrected.  The simplest method, and our initial approach, is to utilize the device orientation provided by the iOS and Android operating systems, however, this was found to be unstable and inadequate for our application.  After much testing, our finalized method utilizes the Madgwick AHRS algorithm \reflabel{madgwick} to combine accelerometer, gyroscope, and magnetometer information and provide orientation of the smartphone with respect to the local level frame.  This is then combined with the GNSS-provided heading to obtain the desired orientation parameters.  This algorithm is fast enough for real-time use, but some inaccuracies arise from the magnetic interference of the metal and electrical components of the vehicle.  As such, our algorithm heavily relies on GNSS-provided navigation parameters to provide corrections to the INS-provided navigation solution.
+One of the most challenging technical aspects of this project was the alignment of the smartphone axes with the frame of the vehicle.  This is necessary to be able to extract the speed and acceleration of the vehicle and enable the fuel consumption calculation.  Since the smartphone is not fixed in the vehicle and can rotate arbitrarily at any time, the orientation parameters describing the relative vehicle-smartphone orientation must be constantly updated and corrected.  The simplest method, and our initial approach, is to utilize the device orientation provided by the iOS and Android operating systems, however, this was found to be unstable and inadequate for our application.  After much testing, our finalized method utilizes the Madgwick AHRS algorithm [\ref*{madgwick}] to combine accelerometer, gyroscope, and magnetometer information and provide orientation of the smartphone with respect to the local level frame.  This is then combined with the GNSS-provided heading to obtain the desired orientation parameters.  This algorithm is fast enough for real-time use, but some inaccuracies arise from the magnetic interference of the metal and electrical components of the vehicle.  As such, our algorithm heavily relies on GNSS-provided navigation parameters to provide corrections to the INS-provided navigation solution.
 
 \section{Conclusion}
+
+\section{LLM Usage}
  
 \section{References}
 
@@ -162,6 +303,8 @@ One of the most challenging technical aspects of this project was the alignment 
 \refinit{reactnative} React-Native, \textit{Meta Platforms, Inc.}, \url{https://reactnative.dev}
 
 \refinit{django} Django, \textit{Django Software Foundation}, \url{https://www.djangoproject.com}
+
+\refinit{aws} Amazon Web Services, \url{https://aws.amazon.com}
 
 \refinit{transport-emissions} ``Transport, Energy and CO2,'' \textit{International Energy Agency}, Paris, France, 2009. Available: \url{https://www.iea.org/reports/transport-energy-and-co2}
 
