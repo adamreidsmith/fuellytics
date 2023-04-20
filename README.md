@@ -30,3 +30,5 @@ To run the project:
 ```
 npm run start
 ```
+---
+Made with :heart: by Chavisa Sornsakul, Wai Ka Wong Situ, and Adam Smith.
